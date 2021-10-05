@@ -1,7 +1,7 @@
 {
-  "name": "route_service",
+  "name": "customer_service",
   "version": "1.0.0",
-  "description": "Route microservice for DMS platform",
+  "description": "Customer microservice for DMS platform",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
