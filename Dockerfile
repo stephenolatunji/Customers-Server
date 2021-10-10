@@ -2,33 +2,38 @@ FROM node:14
 
 # Create app directory
 RUN mkdir -p /usr/src/app
-WORKDIR /usr/app
+WORKDIR /usr/src/app
 
 #Add environmental variables
 
 ARG CUSTOMER_HOST
+ARG CUSTOMER_USER
+ARG CUSTOMER_PASSWORD
 ARG CUSTOMER_DB
-ARG CUSTONER_PASSWORD
-ARG CUSTOMER_
+ARG CUSTOMER_SECRET
+ARG CUSTOMER_PORT
 
 
 ENV HOST $CUSTOMER_HOST
-ENV DB $CUSTOMER_DB
+ENV USER $CUSTOMER_USER
 ENV PASSWORD $CUSTOMER_PASSWORD
-ENV CUSTOMER $CUSTOMER_
+ENV DB $CUSTOMER_DB
+ENV JWT_SECRET $CUSTOMER_SECRET
+ENV PORT $CUSTOMER_PORT
 
 
 # Install app dependencies
 # A wildcard is used to ensure both package.json AND package-lock.json are copied
 # where available (npm@5+)
-COPY package*.json /usr/app/
+COPY package*.json /usr/src/app/
 
 RUN npm install
 # If you are building your code for production
 # RUN npm ci --only=production
 
 # Bundle app source
-COPY . /usr/app
+COPY . /usr/src/app
 
 EXPOSE 80
+
 CMD [ "npm", "start" ]

@@ -1,0 +1,19 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: dmscustomerservice 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dmscustomerservice
+  template:
+    metadata:
+      labels:
+        app: dmscustomerservice 
+    spec:
+      containers:
+        - name: dmscustomerservice 
+          image: dmsacr.azurecr.io/dmscustomerservice
+          ports:
+          - containerPort: 80

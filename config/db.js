@@ -37,7 +37,4 @@ const connectDB = sql.connect(config, (err) =>{
     })
 });
 
-// const sql1 = `CREATE DATABASE IF NOT EXISTS \'${database}'`;
-
-
 module.exports = connectDB; 
