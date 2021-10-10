@@ -52,13 +52,55 @@ router.route('/:id')
                     res.status(400).json({success: false, msg: "Customer not found ", err});
                 }
                 else{
-                    res.status(200).json({success: true, result: results.recordset});
+                    res.status(200).json({success: true, result: results.recordset[0]});
                 }
             });
         }
         catch(err){
             res.status(500).json({success: false, err, msg: 'SERVER Error'})
         }
-    })
+    });
+
+
+router.route('/salesforce/:id')
+    .get(async(req, res) =>{
+        const id = req.params.id;
+
+        try{
+            
+            await connectDB.query(`SELECT * FROM cust_tb WHERE SF_Code = '${id}'`, (err, results) =>{
+                if(err){
+                    res.status(400).json({success: false, msg: "Customer not found ", err});
+                }
+                else{
+                    res.status(200).json({success: true, result: results.recordset[0]});
+                }
+            });
+        }
+        catch(err){
+            res.status(500).json({success: false, err, msg: 'SERVER Error'})
+        }
+    });
+
+router.route('/status/:status')
+    .get(async(req, res) =>{
+        const status = req.params.status;
+
+        try{
+            
+            await connectDB.query(`SELECT * FROM cust_tb WHERE status = '${status}'`, (err, results) =>{
+                if(err){
+                    res.status(400).json({success: false, msg: `No '${status}' customer found` , err});
+                }
+                else{
+                    res.status(200).json({success: true, result: results.recordset});
+                }
+            });
+        }
+        catch(err){
+            res.status(500).json({success: false, err, msg: 'Server Error'})
+        }
+    });
+
 
 module.exports = router;

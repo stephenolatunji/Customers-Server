@@ -20,12 +20,14 @@ app.use(helmet(
 ));
 const REGISTER = require('./Routes/register_customer');
 const CUSTOMER = require('./Routes/customer');
+const UPDATE = require('./Routes/update_customer');
 
 app.get('/', (req, res) => {
     res.send('Welcome to DMS!')
 });
 app.use('/register', REGISTER);
 app.use('/customer', CUSTOMER);
+app.use('/updatecustomer', UPDATE);
 
 const port = process.env.PORT || 80;
 
