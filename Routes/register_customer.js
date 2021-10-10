@@ -36,9 +36,9 @@ router.route('/')
                         '${latitude}', '${date}', 'Active'
                         )`, async(err, result) =>{
                             if(result.rowsAffected > 0){
-                                await connectDB.query(`SELECT * FROM cust_tb WHERE SF_Code = '${SFCode}'`, (err, result)=>{
-                                    if(result.rowsAffected > 0){
-                                        return res.status(200).json({success: true, msg: 'Customer registered successfully', results: result.recordset[0]})
+                                await connectDB.query(`SELECT * FROM cust_tb WHERE SF_Code = '${SFCode}'`, (err, results)=>{
+                                    if(results.rowsAffected > 0){
+                                        return res.status(200).json({success: true, msg: 'Customer registered successfully', result: results.recordset[0]})
                                     }
                                     else{
                                         res.status(400).json({success: false, msg: 'Could not fetch newly added customer'})
