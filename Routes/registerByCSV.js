@@ -72,7 +72,7 @@ router.route('/upload')
                             CUST_type, CUST_Name, country, email, status, district, 
                             region, address, phoneNumber, lat, long, registeredOn)
                             VALUES('${sysproCode}', '${code}', '${salesforceCode}', '${type}', '${compName}', '${country}',
-                            '${email}','Active', '${district}', '${region}', '${address}', '${Owner_Name}', 
+                            '${email}','Active', '${district}', '${region}', '${address}', , 
                             '${Owner_Phone}', '${lat}', '${long}', '${date}' )`, (err, result) =>{
                                 if(err){
                                    return res.status(400).json({success: false, msg: 'Can not register customers', err});

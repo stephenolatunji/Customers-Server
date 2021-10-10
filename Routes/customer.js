@@ -7,11 +7,11 @@ router.route('/getall')
     .get(async(req, res)=>{
         try{
             await connectDB.query(`SELECT * FROM cust_tb`,(err, results) =>{
-                if(err){res.status(400).json({success: false, err});
-                }
+                if(results.rowsAffected > 0){
+                    res.status(200).json({success: true, msg: 'Customers found!', result: results.recordset});
+               }
                 else{
-
-                    res.status(200).json({success: true, msg: 'Customers found!', result: results.recordset})
+                    res.status(400).json({success: false, msg: 'Customers not found', err});
                 }
             })
         }
@@ -28,11 +28,11 @@ router.route('/distributor/:code')
         try{
             
             await connectDB.query(`SELECT * FROM cust_tb WHERE DIST_Code = '${distCode}'`, (err, results) =>{
-                if(err){
-                    res.status(400).json({success: false, msg: "Customers not found ", err});
-                }
+                if(results.rowsAffected > 0){
+                    res.status(200).json({success: true, msg: 'Customers found!', result: results.recordset});
+               }
                 else{
-                    res.status(200).json({success: true, result: results.recordset});
+                    res.status(400).json({success: false, msg: 'Customers not found', err});
                 }
             });
         }
@@ -48,11 +48,11 @@ router.route('/:id')
         try{
             
             await connectDB.query(`SELECT * FROM cust_tb WHERE id = '${id}'`, (err, results) =>{
-                if(err){
-                    res.status(400).json({success: false, msg: "Customer not found ", err});
-                }
+                if(results.rowsAffected > 0){
+                    res.status(200).json({success: true, msg: 'Customer found!', result: results.recordset[0]});
+               }
                 else{
-                    res.status(200).json({success: true, result: results.recordset[0]});
+                    res.status(400).json({success: false, msg: 'Customer not found', err});
                 }
             });
         }
@@ -69,11 +69,11 @@ router.route('/salesforce/:id')
         try{
             
             await connectDB.query(`SELECT * FROM cust_tb WHERE SF_Code = '${id}'`, (err, results) =>{
-                if(err){
-                    res.status(400).json({success: false, msg: "Customer not found ", err});
-                }
+                if(results.rowsAffected > 0){
+                    res.status(200).json({success: true, msg: 'Customer found!', result: results.recordset});
+               }
                 else{
-                    res.status(200).json({success: true, result: results.recordset[0]});
+                    res.status(400).json({success: false, msg: 'Customer not found', err});
                 }
             });
         }
@@ -89,11 +89,11 @@ router.route('/status/:status')
         try{
             
             await connectDB.query(`SELECT * FROM cust_tb WHERE status = '${status}'`, (err, results) =>{
-                if(err){
-                    res.status(400).json({success: false, msg: `No '${status}' customer found` , err});
-                }
+                if(results.rowsAffected > 0){
+                    res.status(200).json({success: true, msg: 'Customers found!', result: results.recordset});
+               }
                 else{
-                    res.status(200).json({success: true, result: results.recordset});
+                    res.status(400).json({success: false, msg: `No ${status} Customer found`, err});
                 }
             });
         }
