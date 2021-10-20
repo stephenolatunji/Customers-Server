@@ -21,6 +21,7 @@ app.use(helmet(
 const REGISTER = require('./Routes/register_customer');
 const CUSTOMER = require('./Routes/customer');
 const UPDATE = require('./Routes/update_customer');
+const UPLOADCSV = require('./Routes/registerByCSV');
 // const ONEOFFCUSTOMER = require('./Routes/oneoff');
 
 app.get('/', (req, res) => {
@@ -29,6 +30,7 @@ app.get('/', (req, res) => {
 app.use('/register', REGISTER);
 app.use('/customer', CUSTOMER);
 app.use('/updatecustomer', UPDATE);
+app.use('/uploadcsv', UPLOADCSV);
 // app.use('/oneoff-customer', ONEOFFCUSTOMER);
 
 const port = process.env.PORT || 80;

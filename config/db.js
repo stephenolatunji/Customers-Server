@@ -11,7 +11,7 @@ const config = {
 const sql2 = `CREATE TABLE cust_tb (
     id int IDENTITY(1, 1) PRIMARY KEY,
     SF_Code varchar(255) NOT NULL,
-    DIST_Code varchar(255) NOT NULL,
+    DIST_Code varchar(255),
     CUST_Type varchar(255) NOT NULL,
     CUST_Name varchar(255) NOT NULL,
     email varchar(255) NOT NULL,
@@ -19,6 +19,7 @@ const sql2 = `CREATE TABLE cust_tb (
     country varchar(255) NOT NULL,
     address varchar(255),
     district varchar(255),
+    region varchar(255),
     longitude varchar(255),
     latitude varchar(255),
     registeredOn varchar(255),
@@ -28,7 +29,7 @@ const sql2 = `CREATE TABLE cust_tb (
 
 const sql3 = `CREATE TABLE one_off_customer_tb (
     id int IDENTITY(1, 1) PRIMARY KEY,
-    DIST_Code varchar(255) NOT NULL,
+    DIST_Code varchar(255),
     CUST_Name varchar(255) NOT NULL,
     email varchar(255) NOT NULL,
     phoneNumber varchar(255),

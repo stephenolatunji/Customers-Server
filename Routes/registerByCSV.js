@@ -45,30 +45,32 @@ router.route('/upload')
             const dataArray = await csv().fromFile(filePath);
             for(let i = 0; i < dataArray.length; i++){
                const singleData = dataArray[i];
+               const compName = singleData.customer_name.toString();
+               const sysproCode = singleData.SYS_Code.toString();
                const salesforceCode = singleData.SF_Code.toString();
-               const type = singleData.company_type.toString(); 
-               const compName = singleData.company_name.toString();
-               const country = singleData.country.toString(); 
-               const email = singleData.email.toString();
                const district = singleData.district.toString();
                const region = singleData.region.toString();
-               const address = singleData.address.toString(); 
+               const type = singleData.customer_type.toString(); 
+               const email = singleData.email.toString();
                const Owner_Phone = singleData.Owner_Phone.toString();
-               const lat = singleData.lat.toString(); 
+               const lat = singleData.lat.toString();
                const long = singleData.long.toString();
-               const sysproCode = singleData.SYS_Code.toString();
+               const address = singleData.address.toString();  
+               const country = singleData.country.toString(); 
+               
                const random = randomize('0', 4);
+               console.log('random');
                const split_name = compName.slice(0, 3).toUpperCase();
                const split_type = type.charAt(0).toUpperCase();
 
                const code = `${split_type}${split_type}${split_name}${random}`;
                 let nonExistingUser = 0;
-
-                await connectDB.query(`SELECT COUNT(SF_Code) AS count FROM companies_tb WHERE SF_Code = '${salesforceCode}'`, async(err, result)=>{
-                   
+                console.log(code);
+                await connectDB.query(`SELECT COUNT(SF_Code) AS count FROM cust_tb WHERE SF_Code = '${salesforceCode}'`, async(err, result)=>{
+                    nonExistingUser += result.recordset[0].count ? 0 : 1
                     if(!result.recordset[0].count){
                         await connectDB.query(
-                            `INSERT INTO companies_tb (DIST_Code, BB_Code, SF_code,
+                            `INSERT INTO cust_tb (DIST_Code, BB_Code, SF_code,
                             CUST_type, CUST_Name, country, email, status, district, 
                             region, address, phoneNumber, lat, long, registeredOn)
                             VALUES('${sysproCode}', '${code}', '${salesforceCode}', '${type}', '${compName}', '${country}',
@@ -79,7 +81,6 @@ router.route('/upload')
                                 }
                                 else{
                                    if(i == dataArray.length -1){
-                                    nonExistingUser += 1
                                     fs.unlink(filePath,()=>{
                                         res.status(200).json({success: true, msg: `${nonExistingUser} ${ nonExistingUser > 1 ? 'customers' : 'customer'}  registration successful. ${dataArray.length - nonExistingUser} were already registered`});
                                     },err =>{
@@ -110,28 +111,8 @@ router.route('/upload')
             
         }
         catch(err){
-            
+            res.status(500).json({success: false, err, msg: 'Server error'})
         }
     })
 
 module.exports = router;  
-
-
- //    const one = {
-            //     salesforceCode,
-            //     type,
-            //     compName,
-            //     country,
-            //     email,
-            //     district,
-            //     region,
-            //     address,
-            //     Owner_Name,
-            //     Owner_Phone,
-            //     DD_Name,
-            //     DD_Phone,
-            //     lat,
-            //     long,
-            //     sysproCode,
-            //     code
-            // }
