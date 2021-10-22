@@ -16,6 +16,7 @@ router.route('/')
             country,
             address,
             district,
+            region,
             longitude,
             latitude,
         } = req.body;
@@ -24,10 +25,10 @@ router.route('/')
             await connectDB.query(`SELECT COUNT(SF_Code) AS count FROM cust_tb WHERE SF_Code = '${SFCode}'`, async(err, results) =>{
                 if(!results.recordset[0].count){
                     await  connectDB.query(`INSERT INTO cust_tb (SF_Code, DIST_Code, 
-                        CUST_Type, CUST_Name, email, phoneNumber, country, address, district,
+                        CUST_Type, CUST_Name, email, phoneNumber, country, address, district, region,
                         longitude, latitude, registeredOn, status) VALUES(
                         '${SFCode}', '${distCode}', '${custType}', '${name}', '${email}',
-                        '${phone}', '${country}', '${address}', '${district}', '${longitude}',
+                        '${phone}', '${country}', '${address}', '${district}', '${region}' ,'${longitude}',
                         '${latitude}', '${date}', 'Active')`, async(err, result) =>{
                             if(result.rowsAffected > 0){
                                 await connectDB.query(`SELECT * FROM cust_tb WHERE SF_Code = '${SFCode}'`, (err, results)=>{

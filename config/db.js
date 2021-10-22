@@ -29,13 +29,9 @@ const sql2 = `CREATE TABLE cust_tb (
 
 const sql3 = `CREATE TABLE one_off_customer_tb (
     id int IDENTITY(1, 1) PRIMARY KEY,
-    DIST_Code varchar(255),
     CUST_Name varchar(255) NOT NULL,
-    email varchar(255) NOT NULL,
     phoneNumber varchar(255),
     country varchar(255) NOT NULL,
-    address varchar(255),
-    status varchar(255),
     registeredOn varchar(255),
 )`;
 const connectDB = sql.connect(config, (err) =>{
