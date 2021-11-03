@@ -36,7 +36,7 @@ router.route('/')
                         longitude, latitude, registeredOn, status, BB_Code, state) VALUES(
                         '${SFCode}', '${distCode}', '${custType}', '${name}', '${email}',
                         '${phone}', '${country}', '${address}', '${district}', '${region}', '${longitude}',
-                        '${latitude}', '${date}', 'Active', '${code}', '${state}')`, async(err, result) =>{console.log(result);
+                        '${latitude}', '${date}', 'Active', '${code}', '${state}')`, async(err, result) =>{
                             if(result.rowsAffected > 0){
                                 await connectDB.query(`SELECT * FROM cust_tb WHERE SF_Code = '${SFCode}'`, (err, results)=>{
                                     if(results.rowsAffected > 0){
