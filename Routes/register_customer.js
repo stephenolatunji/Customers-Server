@@ -27,16 +27,16 @@ router.route('/')
             const split_type = custType.charAt(0).toUpperCase();
 
             const code = `${split_type}${split_type}${split_name}${random}`;
-
+            console.log(code);
         try{
             await connectDB.query(`SELECT COUNT(SF_Code) AS count FROM cust_tb WHERE SF_Code = '${SFCode}'`, async(err, results) =>{
                 if(!results.recordset[0].count){
-                    await  connectDB.query(`INSERT INTO cust_tb (SF_Code, DIST_Code, BB_Code
-                        CUST_Type, CUST_Name, email, phoneNumber, country, address, district, state, region,
-                        longitude, latitude, registeredOn, status) VALUES(
-                        '${SFCode}', '${distCode}', '${code}', '${custType}', '${name}', '${email}',
-                        '${phone}', '${country}', '${address}', '${district}', '${state}', '${region}' ,'${longitude}',
-                        '${latitude}', '${date}', 'Active')`, async(err, result) =>{
+                    await  connectDB.query(`INSERT INTO cust_tb (SF_Code, DIST_Code,
+                        CUST_Type, CUST_Name, email, phoneNumber, country, address, district, region,
+                        longitude, latitude, registeredOn, status, BB_Code, state) VALUES(
+                        '${SFCode}', '${distCode}', '${custType}', '${name}', '${email}',
+                        '${phone}', '${country}', '${address}', '${district}', '${region}', '${longitude}',
+                        '${latitude}', '${date}', 'Active', '${code}', '${state}')`, async(err, result) =>{console.log(result);
                             if(result.rowsAffected > 0){
                                 await connectDB.query(`SELECT * FROM cust_tb WHERE SF_Code = '${SFCode}'`, (err, results)=>{
                                     if(results.rowsAffected > 0){

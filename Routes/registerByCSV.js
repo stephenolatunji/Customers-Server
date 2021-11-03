@@ -70,11 +70,11 @@ router.route('/upload')
                     if(!result.recordset[0].count){
                         await connectDB.query(
                             `INSERT INTO cust_tb (DIST_Code, BB_Code, SF_code,
-                            CUST_type, CUST_Name, country, email, status, district, state,
-                            region, address, phoneNumber, latitude, longitude, registeredOn)
+                            CUST_type, CUST_Name, country, email, status, district,
+                            region, address, phoneNumber, latitude, longitude, registeredOn, state)
                             VALUES('${sysproCode}', '${code}', '${salesforceCode}', '${type}', '${compName}', '${country}',
-                            '${email}','Active', '${district}', '${state}', '${region}', '${address}', 
-                            '${Owner_Phone}', '${lat}', '${long}', '${date}' )`, (err, result) =>{
+                            '${email}','Active', '${district}', '${region}', '${address}', 
+                            '${Owner_Phone}', '${lat}', '${long}', '${date}', '${state}')`, (err, result) =>{
                                 if(err){
                                    return res.status(400).json({success: false, msg: 'Can not register customers', err});
                                 }
