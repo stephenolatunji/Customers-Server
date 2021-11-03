@@ -48,6 +48,7 @@ router.route('/upload')
                const sysproCode = singleData.SYS_Code.toString();
                const salesforceCode = singleData.SF_Code.toString();
                const district = singleData.district.toString();
+               const state = singleData.state.toString();
                const region = singleData.region.toString();
                const type = singleData.customer_type.toString(); 
                const email = singleData.email.toString();
@@ -69,10 +70,10 @@ router.route('/upload')
                     if(!result.recordset[0].count){
                         await connectDB.query(
                             `INSERT INTO cust_tb (DIST_Code, BB_Code, SF_code,
-                            CUST_type, CUST_Name, country, email, status, district, 
+                            CUST_type, CUST_Name, country, email, status, district, state,
                             region, address, phoneNumber, latitude, longitude, registeredOn)
                             VALUES('${sysproCode}', '${code}', '${salesforceCode}', '${type}', '${compName}', '${country}',
-                            '${email}','Active', '${district}', '${region}', '${address}', 
+                            '${email}','Active', '${district}', '${state}', '${region}', '${address}', 
                             '${Owner_Phone}', '${lat}', '${long}', '${date}' )`, (err, result) =>{
                                 if(err){
                                    return res.status(400).json({success: false, msg: 'Can not register customers', err});
