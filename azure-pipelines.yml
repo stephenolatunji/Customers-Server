@@ -1,155 +1,162 @@
-# Deploy to Azure Kubernetes Service
-# Build and push image to Azure Container Registry; Deploy to Azure Kubernetes Service
-# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
-
 trigger:
 - master
 
 resources:
-- repo: self
+  repositories:
+  - repository: appsectemplates
+    type: git
+    name: DevSecOps/DevSecOps
 
 variables:
-
-  # Container registry service connection established during pipeline creation
-  dockerRegistryServiceConnection: '0f54e57f-8284-4a85-b265-95c105f8237e'
+  dockerRegistryServiceConnection: 'ACR-Dev'
   imageRepository: 'dmscustomerservice'
-  containerRegistry: 'dmsacr.azurecr.io'
   dockerfilePath: '**/Dockerfile'
-  tag: '$(Build.BuildId)'
-  imagePullSecret: 'dmsacr8865e90f-auth'
-
-  # Agent VM image name
+  tag: 'latest'
+  # imagePullSecret: 'dmsacr13785139-auth'
   vmImageName: 'ubuntu-latest'
+  sonarName: 'DMS-CustomerService'
+  ACR: 'microservicesacrafrdev.azurecr.io'
+  checkmarxTeam: '/CxServer/AB-InBev/AFR/DMS'
+  imagePullSecret: 'dms-customerservice'
 
-  # Name of the new namespace being created to deploy the PR changes.
-  k8sNamespaceForPR: 'review-app-$(System.PullRequest.PullRequestId)'
 
 stages:
-- stage: Build
-  displayName: Build stage
+# - stage: Build
+#   displayName: Build stage
+#   jobs:
+#   - job: Build
+#     displayName: Build
+#     pool:
+#       vmImage: $(vmImageName)
+#     steps:
+
+#     - checkout: self
+#     - checkout: appsectemplates
+
+#     - task: Npm@1
+#       inputs:
+#         command: 'install'
+#         #workingDir: '.'
+#         workingDir: './$(Build.Repository.Name)'
+
+#     - task: Docker@2
+#       displayName: Build #and push an image to container registry
+#       inputs:
+#         command: build #AndPush
+#         repository: $(imageRepository)
+#         dockerfile: $(dockerfilePath)
+#         containerRegistry: $(dockerRegistryServiceConnection)
+#         arguments: --build-arg COMPANY_USER=$(USER) --build-arg COMPANY_HOST=$(HOST) --build-arg COMPANY_DB=$(DB) --build-arg COMPANY_PASSWORD=$(PASSWORD) --build-arg COMPANY_JWT=$(JWT_SECRET)
+#         tags: |
+#           $(tag)
+          
+
+#     - template: pipeline_templates/Security_tasks/prepareSonarCloud.yml@appsectemplates
+#       parameters:
+#         SCServiceConnection: 'SonarcloudServer'
+#         SCProjectKey: $(sonarName) 
+#         SCProjectName: $(sonarName) 
+#         SCBranchName: '$(Build.SourceBranchName)'
+#         SCBaseDirPath: './$(Build.Repository.Name)'
+
+#     - template: pipeline_templates/secure_code_scan.yml@appsectemplates
+#       parameters:
+        
+#         scanSonarCloud: true
+#         sonarCloudGate: false
+#         SCServiceConnection: 'SonarcloudServer'
+
+#         scanSnyk: true
+#         SKFailOnIssues: false
+#         SkServiceConnection: 'SnykServer'
+#         SkOrganization: '6faff7dd-4e52-4ac6-af3c-a5d1eaa27be2'
+#         SkAdditionalArgs: '--all-projects --detection-depth=4'
+        
+#         scanGitleaks: true
+
+#         scanSnykContainer: true
+#         SkDockerImageName: '$(ACR)/$(imageRepository):$(tag)'
+#         SkDockerFilePath: './$(Build.Repository.Name)/Dockerfile'
+
+#         scanCheckmarx: true
+#         CxServiceConnection: 'CheckmarxServer'
+#         CxPreset: 'ASA_SDLC_Ready'
+#         CxEnableSyncScan: false
+#         CxEnableThreshold: false
+#         CxTeamName: $(checkmarxTeam)
+
+
+- stage: Deploy
+  displayName: Deploystage
+  # dependsOn:
+  # - Build
+  pool:
+    name: 'AFR_Non_Prod_Self_hosted_Pool'
+    demands: 
+    - agent.os -equals Linux
   jobs:
-  - job: Build
-    displayName: Build
-    pool:
-      vmImage: $(vmImageName)
+  - job: 'ACR_Deploy'
+    displayName: 'ACR Deploy'
     steps:
-    - task: Docker@2
-      displayName: Build #and push an image to container registry
+    - checkout: self
+
+    - task: CmdLine@2
       inputs:
-        command: build #AndPush
+        script: |
+          pwd
+          cd $(Agent.BuildDirectory)
+          pwd
+
+    - task: Docker@2
+      displayName: Build
+      inputs:
+        command: build
         repository: $(imageRepository)
         dockerfile: $(dockerfilePath)
         containerRegistry: $(dockerRegistryServiceConnection)
-        
-        arguments: --build-arg CUSTOMER_USER=$(USER) --build-arg CUSTOMER_HOST=$(HOST) --build-arg CUSTOMER_DB=$(DB) --build-arg CUSTOMER_PASSWORD=$(PASSWORD) --build-arg CUSTOMER_SECRET=$(JWT_SECRET) --build-arg CUSTOMER_PORT=$(PORT)
-
+        arguments: --build-arg COMPANY_USER=$(USER) --build-arg COMPANY_HOST=$(HOST) --build-arg COMPANY_DB=$(DB) --build-arg COMPANY_PASSWORD=$(PASSWORD) --build-arg COMPANY_JWT=$(JWT_SECRET)
         tags: |
-          $(tag)
-
+            $(tag)
+      
     - task: Docker@2
       displayName: Push
       inputs:
-        command: push
-        repository: $(imageRepository)
-        containerRegistry: $(dockerRegistryServiceConnection)
-        tags: |
-          $(tag)    
-
-
-    - upload: manifests
-      artifact: manifests
-
-- stage: Deploy
-  displayName: Deploy stage
-  dependsOn: Build
-
-  jobs:
-  - deployment: Deploy
-    condition: and(succeeded(), not(startsWith(variables['Build.SourceBranch'], 'refs/pull/')))
+          command: push
+          repository: $(imageRepository)
+          containerRegistry: $(dockerRegistryServiceConnection)
+          tags: |
+            $(tag)
+  
+  - deployment:
     displayName: Deploy
-    pool:
-      vmImage: $(vmImageName)
-    environment: 'DMSCustomerService.customer-service'
+    environment: 'DMSCompanyService'
     strategy:
       runOnce:
         deploy:
           steps:
+          # - task: Kubernetes@1
+          #   inputs:
+          #     connectionType: 'Azure Resource Manager'
+          #     azureSubscriptionEndpoint: 'AFR_Microservices_Azure_Non_Prod-AFR_WEB_Distributor Management System (DMS)'
+          #     azureResourceGroup: 'microservices-RG-Africa-Dev'
+          #     kubernetesCluster: 'microservices-AKS-afr-dev'
+          #     useClusterAdmin: true
+          #     namespace: 'bees-hive'
+          #     command: 'apply'
+          #     arguments: '-f manifests/deployment.yml -f manifests/service.yml'
+          #     secretType: 'dockerRegistry'
+          #     containerRegistryType: 'Azure Container Registry'
+          #     azureSubscriptionEndpointForSecrets: 'AFR_Microservices_Azure_Non_Prod-AFR_WEB_Distributor Management System (DMS)'
+          #     azureContainerRegistry: 'microservicesacrafrdev.azurecr.io'
+          #     secretName: '$(imagePullSecret)'
+          
           - task: KubernetesManifest@0
-            displayName: Create imagePullSecret
             inputs:
-              action: createSecret
-              secretName: $(imagePullSecret)
-              dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
-
-          - task: KubernetesManifest@0
-            displayName: Deploy to Kubernetes cluster
-            inputs:
-              action: deploy
+              action: 'deploy'
+              kubernetesServiceConnection: 'AFR DEV-AFR_WEB_Distributor Management System (DMS)'
+              namespace: 'dms'
               manifests: |
-                $(Pipeline.Workspace)/manifests/deployment.yml
-                $(Pipeline.Workspace)/manifests/service.yml
-              imagePullSecrets: |
-                $(imagePullSecret)
-              containers: |
-                $(containerRegistry)/$(imageRepository):$(tag)
+                manifests/deployment.yml 
+                manifests/service.yml
 
-  - deployment: DeployPullRequest
-    displayName: Deploy Pull request
-    condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/pull/'))
-    pool:
-      vmImage: $(vmImageName)
 
-    environment: 'DMSCustomerService.$(k8sNamespaceForPR)'
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-          - reviewApp: customer-service
-
-          - task: Kubernetes@1
-            displayName: 'Create a new namespace for the pull request'
-            inputs:
-              command: apply
-              useConfigurationFile: true
-              inline: '{ "kind": "Namespace", "apiVersion": "v1", "metadata": { "name": "$(k8sNamespaceForPR)" }}'
-
-          - task: KubernetesManifest@0
-            displayName: Create imagePullSecret
-            inputs:
-              action: createSecret
-              secretName: $(imagePullSecret)
-              namespace: $(k8sNamespaceForPR)
-              dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
-
-          - task: KubernetesManifest@0
-            displayName: Deploy to the new namespace in the Kubernetes cluster
-            inputs:
-              action: deploy
-              namespace: $(k8sNamespaceForPR)
-              manifests: |
-                $(Pipeline.Workspace)/manifests/deployment.yml
-                $(Pipeline.Workspace)/manifests/service.yml
-              imagePullSecrets: |
-                $(imagePullSecret)
-              containers: |
-                $(containerRegistry)/$(imageRepository):$(tag)
-
-          - task: Kubernetes@1
-            name: get
-            displayName: 'Get services in the new namespace'
-            continueOnError: true
-            inputs:
-              command: get
-              namespace: $(k8sNamespaceForPR)
-              arguments: svc
-              outputFormat: jsonpath='http://{.items[0].status.loadBalancer.ingress[0].ip}:{.items[0].spec.ports[0].port}'
-
-          # Getting the IP of the deployed service and writing it to a variable for posing comment
-          - script: |
-              url="$(get.KubectlOutput)"
-              message="Your review app has been deployed"
-              if [ ! -z "$url" -a "$url" != "http://:" ]
-              then
-                message="${message} and is available at $url.<br><br>[Learn More](https://aka.ms/testwithreviewapps) about how to test and provide feedback for the app."
-              fi
-              echo "##vso[task.setvariable variable=GITHUB_COMMENT]$message"
