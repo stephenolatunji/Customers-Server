@@ -127,13 +127,7 @@ stages:
           tags: |
             $(tag)
   
-  - deployment:
-    displayName: Deploy
-    environment: 'DMSCompanyService'
-    strategy:
-      runOnce:
-        deploy:
-          steps:
+
           # - task: Kubernetes@1
           #   inputs:
           #     connectionType: 'Azure Resource Manager'
@@ -150,13 +144,13 @@ stages:
           #     azureContainerRegistry: 'microservicesacrafrdev.azurecr.io'
           #     secretName: '$(imagePullSecret)'
           
-          - task: KubernetesManifest@0
-            inputs:
-              action: 'deploy'
-              kubernetesServiceConnection: 'AFR DEV-AFR_WEB_Distributor Management System (DMS)'
-              namespace: 'dms'
-              manifests: |
-                manifests/deployment.yml 
-                manifests/service.yml
+    - task: KubernetesManifest@0
+      inputs:
+        action: 'deploy'
+        kubernetesServiceConnection: 'AFR DEV-AFR_WEB_Distributor Management System (DMS)'
+        namespace: 'dms'
+        manifests: |
+          manifests/deployment.yml 
+          manifests/service.yml
 
 
