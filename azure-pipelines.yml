@@ -8,17 +8,30 @@ resources:
     name: DevSecOps/DevSecOps
 
 variables:
-  dockerRegistryServiceConnection: 'ACR-Dev'
-  imageRepository: 'dmscustomerservice'
-  dockerfilePath: '**/Dockerfile'
-  tag: 'latest'
-  # imagePullSecret: 'dmsacr13785139-auth'
-  vmImageName: 'ubuntu-latest'
-  sonarName: 'DMS-CustomerService'
-  ACR: 'microservicesacrafrdev.azurecr.io'
-  checkmarxTeam: '/CxServer/AB-InBev/AFR/DMS'
-  imagePullSecret: 'dms-customerservice'
+- group: CustomerService
+- name: dockerRegistryServiceConnection
+  value: 'ACR-Dev'
 
+- name: imageRepository
+  value: 'dmscustomerservice'
+
+- name: dockerfilePath
+  value: '**/Dockerfile'
+
+- name: 'tag'
+  value: 'latest'
+
+- name: 'vmImageName'
+  value: 'ubuntu-latest'
+
+- name: 'sonarName'
+  value: 'DMS-CustomerService'
+
+- name: 'ACR'
+  value: 'microservicesacrafrdev.azurecr.io'
+
+- name: 'checkmarxTeam'
+  value: '/CxServer/AB-InBev/AFR/DMS'
 
 stages:
 # - stage: Build
