@@ -42,9 +42,9 @@ stages:
     pool:
       vmImage: $(vmImageName)
 
-    steps:
-    - checkout: self
-    - checkout: appsectemplates
+    # steps:
+    # - checkout: self
+    # - checkout: appsectemplates
 
 #     - task: Npm@1
 #       inputs:
@@ -63,12 +63,11 @@ stages:
 #         tags: |
 #           $(tag)
 
-    # - template: pipeline_templates/secure_code_scan.yml@appsectemplates
-    #   parameters:
-        
-    #     scanSonarCloud: true
-    #     sonarCloudGate: false
-    #     SCServiceConnection: 'SonarcloudServer'
+  - template: pipeline_templates/secure_code_scan.yml@appsectemplates
+    parameters:
+      scanSonarCloud: true
+      sonarCloudGate: false
+      SCServiceConnection: 'SonarcloudServer'
 
 #         scanSnyk: true
 #         SKFailOnIssues: false
