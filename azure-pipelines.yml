@@ -33,16 +33,16 @@ resources:
 # - name: 'checkmarxTeam'
 #   value: '/CxServer/AB-InBev/AFR/DMS'
 
-# stages:
-# - stage: Build
-#   displayName: Build stage
-#   jobs:
-#   - job: Build
-#     displayName: Build
-#     pool:
-#       vmImage: $(vmImageName)
-#     steps:
+stages:
+- stage: Build
+  displayName: Build stage
+  jobs:
+  - job: Build
+    displayName: Build
+    pool:
+      vmImage: $(vmImageName)
 
+#     steps:
 #     - checkout: self
 #     - checkout: appsectemplates
 
