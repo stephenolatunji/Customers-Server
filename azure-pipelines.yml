@@ -1,11 +1,11 @@
-# trigger:
-# - master
+trigger:
+- devsecops-enablement
 
-# resources:
-#   repositories:
-#   - repository: appsectemplates
-#     type: git
-#     name: DevSecOps/DevSecOps
+resources:
+  repositories:
+  - repository: appsectemplates
+    type: git
+    name: DevSecOps/DevSecOps
 
 # variables:
 # - group: CustomerService
