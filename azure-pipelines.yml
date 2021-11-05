@@ -90,71 +90,71 @@ stages:
 #         CxTeamName: $(checkmarxTeam)
 
 
-- stage: Deploy
-  displayName: Deploystage
-  # dependsOn:
-  # - Build
-  pool:
-    name: 'AFR_Non_Prod_Self_hosted_Pool'
-    demands: 
-    - agent.os -equals Linux
-  jobs:
-  - job: 'ACR_Deploy'
-    displayName: 'ACR Deploy'
-    steps:
-    - checkout: self
+# - stage: Deploy
+#   displayName: Deploystage
+#   # dependsOn:
+#   # - Build
+#   pool:
+#     name: 'AFR_Non_Prod_Self_hosted_Pool'
+#     demands: 
+#     - agent.os -equals Linux
+#   jobs:
+#   - job: 'ACR_Deploy'
+#     displayName: 'ACR Deploy'
+#     steps:
+#     - checkout: self
 
-    - task: CmdLine@2
-      inputs:
-        script: |
-          pwd
-          cd $(Agent.BuildDirectory)
-          pwd
+#     - task: CmdLine@2
+#       inputs:
+#         script: |
+#           pwd
+#           cd $(Agent.BuildDirectory)
+#           pwd
 
-    - task: Docker@2
-      displayName: Build
-      inputs:
-        command: build
-        repository: $(imageRepository)
-        dockerfile: $(dockerfilePath)
-        containerRegistry: $(dockerRegistryServiceConnection)
-        arguments: --build-arg COMPANY_USER=$(USER) --build-arg COMPANY_HOST=$(HOST) --build-arg COMPANY_DB=$(DB) --build-arg COMPANY_PASSWORD=$(PASSWORD) --build-arg COMPANY_JWT=$(JWT_SECRET)
-        tags: |
-            $(tag)
+#     - task: Docker@2
+#       displayName: Build
+#       inputs:
+#         command: build
+#         repository: $(imageRepository)
+#         dockerfile: $(dockerfilePath)
+#         containerRegistry: $(dockerRegistryServiceConnection)
+#         arguments: --build-arg COMPANY_USER=$(USER) --build-arg COMPANY_HOST=$(HOST) --build-arg COMPANY_DB=$(DB) --build-arg COMPANY_PASSWORD=$(PASSWORD) --build-arg COMPANY_JWT=$(JWT_SECRET)
+#         tags: |
+#             $(tag)
       
-    - task: Docker@2
-      displayName: Push
-      inputs:
-          command: push
-          repository: $(imageRepository)
-          containerRegistry: $(dockerRegistryServiceConnection)
-          tags: |
-            $(tag)
+#     - task: Docker@2
+#       displayName: Push
+#       inputs:
+#           command: push
+#           repository: $(imageRepository)
+#           containerRegistry: $(dockerRegistryServiceConnection)
+#           tags: |
+#             $(tag)
   
 
-          # - task: Kubernetes@1
-          #   inputs:
-          #     connectionType: 'Azure Resource Manager'
-          #     azureSubscriptionEndpoint: 'AFR_Microservices_Azure_Non_Prod-AFR_WEB_Distributor Management System (DMS)'
-          #     azureResourceGroup: 'microservices-RG-Africa-Dev'
-          #     kubernetesCluster: 'microservices-AKS-afr-dev'
-          #     useClusterAdmin: true
-          #     namespace: 'bees-hive'
-          #     command: 'apply'
-          #     arguments: '-f manifests/deployment.yml -f manifests/service.yml'
-          #     secretType: 'dockerRegistry'
-          #     containerRegistryType: 'Azure Container Registry'
-          #     azureSubscriptionEndpointForSecrets: 'AFR_Microservices_Azure_Non_Prod-AFR_WEB_Distributor Management System (DMS)'
-          #     azureContainerRegistry: 'microservicesacrafrdev.azurecr.io'
-          #     secretName: '$(imagePullSecret)'
+#           # - task: Kubernetes@1
+#           #   inputs:
+#           #     connectionType: 'Azure Resource Manager'
+#           #     azureSubscriptionEndpoint: 'AFR_Microservices_Azure_Non_Prod-AFR_WEB_Distributor Management System (DMS)'
+#           #     azureResourceGroup: 'microservices-RG-Africa-Dev'
+#           #     kubernetesCluster: 'microservices-AKS-afr-dev'
+#           #     useClusterAdmin: true
+#           #     namespace: 'bees-hive'
+#           #     command: 'apply'
+#           #     arguments: '-f manifests/deployment.yml -f manifests/service.yml'
+#           #     secretType: 'dockerRegistry'
+#           #     containerRegistryType: 'Azure Container Registry'
+#           #     azureSubscriptionEndpointForSecrets: 'AFR_Microservices_Azure_Non_Prod-AFR_WEB_Distributor Management System (DMS)'
+#           #     azureContainerRegistry: 'microservicesacrafrdev.azurecr.io'
+#           #     secretName: '$(imagePullSecret)'
           
-    - task: KubernetesManifest@0
-      inputs:
-        action: 'deploy'
-        kubernetesServiceConnection: 'AFR DEV-AFR_WEB_Distributor Management System (DMS)'
-        namespace: 'dms'
-        manifests: |
-          manifests/deployment.yml 
-          manifests/service.yml
+#     - task: KubernetesManifest@0
+#       inputs:
+#         action: 'deploy'
+#         kubernetesServiceConnection: 'AFR DEV-AFR_WEB_Distributor Management System (DMS)'
+#         namespace: 'dms'
+#         manifests: |
+#           manifests/deployment.yml 
+#           manifests/service.yml
 
 
