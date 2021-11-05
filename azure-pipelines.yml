@@ -34,17 +34,17 @@ variables:
   value: '/CxServer/AB-InBev/AFR/DMS'
 
 stages:
-# - stage: Build
-#   displayName: Build stage
-#   jobs:
-#   - job: Build
-#     displayName: Build
-#     pool:
-#       vmImage: $(vmImageName)
-#     steps:
+- stage: Build
+  displayName: Build stage
+  jobs:
+  - job: Build
+    displayName: Build
+    pool:
+      vmImage: $(vmImageName)
+    steps:
 
-#     - checkout: self
-#     - checkout: appsectemplates
+    - checkout: self
+    - checkout: appsectemplates
 
 #     - task: Npm@1
 #       inputs:
@@ -62,23 +62,6 @@ stages:
 #         arguments: --build-arg COMPANY_USER=$(USER) --build-arg COMPANY_HOST=$(HOST) --build-arg COMPANY_DB=$(DB) --build-arg COMPANY_PASSWORD=$(PASSWORD) --build-arg COMPANY_JWT=$(JWT_SECRET)
 #         tags: |
 #           $(tag)
-          
-
-    - template: pipeline_templates/Security_tasks/prepareSonarCloud.yml@appsectemplates
-      parameters:
-        SCServiceConnection: 'SonarcloudServer'
-        SCProjectKey: 'AFR_Customer_Order_Portal' 
-        SCProjectName: 'AFR_Customer_Order_Portal'
-        SCBranchName: '$(Build.SourceBranchName)'
-        SCBaseDirPath: './$(Build.Repository.Name)'
-
-      # - template: pipeline_templates/Security_tasks/prepareSonarCloud.yml@appsectemplates
-      #   parameters:
-      #     SCServiceConnection: 'SonarcloudServer'
-      #     SCProjectKey: $(sonarName) 
-      #     SCProjectName: $(sonarName) 
-      #     SCBranchName: '$(Build.SourceBranchName)'
-      #     SCBaseDirPath: './$(Build.Repository.Name)'
 
     # - template: pipeline_templates/secure_code_scan.yml@appsectemplates
     #   parameters:
