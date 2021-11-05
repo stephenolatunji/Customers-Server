@@ -1,50 +1,50 @@
-trigger:
-- master
+# trigger:
+# - master
 
-resources:
-  repositories:
-  - repository: appsectemplates
-    type: git
-    name: DevSecOps/DevSecOps
+# resources:
+#   repositories:
+#   - repository: appsectemplates
+#     type: git
+#     name: DevSecOps/DevSecOps
 
-variables:
-- group: CustomerService
-- name: dockerRegistryServiceConnection
-  value: 'ACR-Dev'
+# variables:
+# - group: CustomerService
+# - name: dockerRegistryServiceConnection
+#   value: 'ACR-Dev'
 
-- name: imageRepository
-  value: 'dmscustomerservice'
+# - name: imageRepository
+#   value: 'dmscustomerservice'
 
-- name: dockerfilePath
-  value: '**/Dockerfile'
+# - name: dockerfilePath
+#   value: '**/Dockerfile'
 
-- name: 'tag'
-  value: 'latest'
+# - name: 'tag'
+#   value: 'latest'
 
-- name: 'vmImageName'
-  value: 'ubuntu-latest'
+# - name: 'vmImageName'
+#   value: 'ubuntu-latest'
 
-- name: 'sonarName'
-  value: 'DMS-CustomerService'
+# - name: 'sonarName'
+#   value: 'DMS-CustomerService'
 
-- name: 'ACR'
-  value: 'microservicesacrafrdev.azurecr.io'
+# - name: 'ACR'
+#   value: 'microservicesacrafrdev.azurecr.io'
 
-- name: 'checkmarxTeam'
-  value: '/CxServer/AB-InBev/AFR/DMS'
+# - name: 'checkmarxTeam'
+#   value: '/CxServer/AB-InBev/AFR/DMS'
 
-stages:
-- stage: Build
-  displayName: Build stage
-  jobs:
-  - job: Build
-    displayName: Build
-    pool:
-      vmImage: $(vmImageName)
-    steps:
+# stages:
+# - stage: Build
+#   displayName: Build stage
+#   jobs:
+#   - job: Build
+#     displayName: Build
+#     pool:
+#       vmImage: $(vmImageName)
+#     steps:
 
-    - checkout: self
-    - checkout: appsectemplates
+#     - checkout: self
+#     - checkout: appsectemplates
 
 #     - task: Npm@1
 #       inputs:
