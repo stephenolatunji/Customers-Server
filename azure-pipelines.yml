@@ -42,9 +42,9 @@ stages:
     pool:
       vmImage: $(vmImageName)
 
-#     steps:
-#     - checkout: self
-#     - checkout: appsectemplates
+    steps:
+    - checkout: self
+    - checkout: appsectemplates
 
 #     - task: Npm@1
 #       inputs:
