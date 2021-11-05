@@ -45,10 +45,17 @@ jobs:
     - template: pipeline_templates/Security_tasks/prepareSonarCloud.yml@appsectemplates
       parameters:
         SCServiceConnection: 'SonarcloudServer'
-        SCProjectKey: 'AFR_Customer_Order_Portal' 
-        SCProjectName: 'AFR_Customer_Order_Portal'
+        SCProjectKey: $(sonarName) 
+        SCProjectName: $(sonarName) 
         SCBranchName: '$(Build.SourceBranchName)'
         SCBaseDirPath: './$(Build.Repository.Name)'
+
+    - template: pipeline_templates/secure_code_scan.yml@appsectemplates
+      parameters:
+        
+        scanSonarCloud: true
+        sonarCloudGate: false
+        SCServiceConnection: 'SonarcloudServer'
 
 # - job: Build
 #   displayName: Build
