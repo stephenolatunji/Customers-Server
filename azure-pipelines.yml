@@ -64,20 +64,20 @@ stages:
 #           $(tag)
           
 
-    - template: pipeline_templates/Security_tasks/prepareSonarCloud.yml@appsectemplates
-      parameters:
-        SCServiceConnection: 'SonarcloudServer'
-        SCProjectKey: $(sonarName) 
-        SCProjectName: $(sonarName) 
-        SCBranchName: '$(Build.SourceBranchName)'
-        SCBaseDirPath: './$(Build.Repository.Name)'
+      - template: pipeline_templates/Security_tasks/prepareSonarCloud.yml@appsectemplates
+        parameters:
+          SCServiceConnection: 'SonarcloudServer'
+          SCProjectKey: $(sonarName) 
+          SCProjectName: $(sonarName) 
+          SCBranchName: '$(Build.SourceBranchName)'
+          SCBaseDirPath: './$(Build.Repository.Name)'
 
-    - template: pipeline_templates/secure_code_scan.yml@appsectemplates
-      parameters:
+    # - template: pipeline_templates/secure_code_scan.yml@appsectemplates
+    #   parameters:
         
-        scanSonarCloud: true
-        sonarCloudGate: false
-        SCServiceConnection: 'SonarcloudServer'
+    #     scanSonarCloud: true
+    #     sonarCloudGate: false
+    #     SCServiceConnection: 'SonarcloudServer'
 
 #         scanSnyk: true
 #         SKFailOnIssues: false
