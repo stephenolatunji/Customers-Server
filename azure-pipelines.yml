@@ -33,18 +33,32 @@ variables:
 - name: 'checkmarxTeam'
   value: '/CxServer/AB-InBev/AFR/DMS'
 
-stages:
-- stage: Build
-  displayName: Build stage
-  jobs:
-  - job: Build
-    displayName: Build
-    pool:
-      vmImage: $(vmImageName)
+jobs:
+- job: SecureScan
+  displayName: SecureScan
+  pool:
+    vmImage: 'ubuntu-latest'
+  steps:
+    - checkout: self
+    - checkout: appsectemplates
 
-    # steps:
-    # - checkout: self
-    # - checkout: appsectemplates
+    - template: pipeline_templates/Security_tasks/prepareSonarCloud.yml@appsectemplates
+      parameters:
+        SCServiceConnection: 'SonarcloudServer'
+        SCProjectKey: 'AFR_Customer_Order_Portal' 
+        SCProjectName: 'AFR_Customer_Order_Portal'
+        SCBranchName: '$(Build.SourceBranchName)'
+        SCBaseDirPath: './$(Build.Repository.Name)'
+
+- job: Build
+  displayName: Build
+  pool:
+    vmImage: $(vmImageName)
+
+# stages:
+# - stage: Build
+#   displayName: Build stage
+#   jobs:
 
 #     - task: Npm@1
 #       inputs:
