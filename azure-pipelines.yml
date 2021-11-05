@@ -50,10 +50,10 @@ jobs:
         SCBranchName: '$(Build.SourceBranchName)'
         SCBaseDirPath: './$(Build.Repository.Name)'
 
-- job: Build
-  displayName: Build
-  pool:
-    vmImage: $(vmImageName)
+# - job: Build
+#   displayName: Build
+#   pool:
+#     vmImage: $(vmImageName)
 
 # stages:
 # - stage: Build
