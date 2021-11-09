@@ -94,12 +94,18 @@ jobs:
     #     CxTeamName: $(checkmarxTeam)
 
 
+# - job: Build
+#   displayName: Build
+#   pool:
+#     name: 'AFR_Non_Prod_Self_hosted_Pool'
+#     demands: 
+#     - agent.os -equals Linux
+
+
 - job: Build
   displayName: Build
   pool:
-    name: 'AFR_Non_Prod_Self_hosted_Pool'
-    demands: 
-    - agent.os -equals Linux
+      vmImage: $(vmImageName)
 
 - job: 'ACR_Deploy'
   displayName: 'ACR Deploy'
