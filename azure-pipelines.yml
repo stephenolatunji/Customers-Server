@@ -65,12 +65,6 @@ jobs:
   steps:
     - checkout: self
 
-    - task: Npm@1
-      inputs:
-        command: 'install'
-        #workingDir: '.'
-        workingDir: './$(Build.Repository.Name)'
-
     - task: Docker@2
       displayName: Build #and push an image to container registry
       inputs:
