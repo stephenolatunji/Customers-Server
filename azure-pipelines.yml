@@ -57,14 +57,6 @@ jobs:
     #     sonarCloudGate: false
     #     SCServiceConnection: 'SonarcloudServer'
 
-- job: Build
-  displayName: Build
-  pool:
-    vmImage: $(vmImageName)
-    
-  steps:
-    - checkout: self
-
     - task: Docker@2
       displayName: Build #and push an image to container registry
       inputs:
