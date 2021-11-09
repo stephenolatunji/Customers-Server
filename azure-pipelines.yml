@@ -102,18 +102,16 @@ jobs:
     #     CxTeamName: $(checkmarxTeam)
 
 
-- stage: Deploy
-  displayName: Deploystage
-  # dependsOn:
-  # - Build
+- job: Build
+  displayName: Build
   pool:
     name: 'AFR_Non_Prod_Self_hosted_Pool'
     demands: 
     - agent.os -equals Linux
-  jobs:
-  - job: 'ACR_Deploy'
-    displayName: 'ACR Deploy'
-    steps:
+
+- job: 'ACR_Deploy'
+  displayName: 'ACR Deploy'
+  steps:
     - checkout: self
 
     - task: CmdLine@2
@@ -143,23 +141,6 @@ jobs:
           tags: |
             $(tag)
   
-
-          # - task: Kubernetes@1
-          #   inputs:
-          #     connectionType: 'Azure Resource Manager'
-          #     azureSubscriptionEndpoint: 'AFR_Microservices_Azure_Non_Prod-AFR_WEB_Distributor Management System (DMS)'
-          #     azureResourceGroup: 'microservices-RG-Africa-Dev'
-          #     kubernetesCluster: 'microservices-AKS-afr-dev'
-          #     useClusterAdmin: true
-          #     namespace: 'bees-hive'
-          #     command: 'apply'
-          #     arguments: '-f manifests/deployment.yml -f manifests/service.yml'
-          #     secretType: 'dockerRegistry'
-          #     containerRegistryType: 'Azure Container Registry'
-          #     azureSubscriptionEndpointForSecrets: 'AFR_Microservices_Azure_Non_Prod-AFR_WEB_Distributor Management System (DMS)'
-          #     azureContainerRegistry: 'microservicesacrafrdev.azurecr.io'
-          #     secretName: '$(imagePullSecret)'
-          
     - task: KubernetesManifest@0
       inputs:
         action: 'deploy'
