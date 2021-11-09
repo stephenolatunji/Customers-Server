@@ -50,46 +50,44 @@ jobs:
         SCBranchName: '$(Build.SourceBranchName)'
         SCBaseDirPath: './$(Build.Repository.Name)'
 
+    # - template: pipeline_templates/secure_code_scan.yml@appsectemplates
+    #   parameters:
+        
+    #     scanSonarCloud: true
+    #     sonarCloudGate: false
+    #     SCServiceConnection: 'SonarcloudServer'
+
+- job: Build
+  displayName: Build
+  pool:
+    vmImage: $(vmImageName)
+    
+  steps:
+    - checkout: self
+
+    - task: Npm@1
+      inputs:
+        command: 'install'
+        #workingDir: '.'
+        workingDir: './$(Build.Repository.Name)'
+
+    - task: Docker@2
+      displayName: Build #and push an image to container registry
+      inputs:
+        command: build #AndPush
+        repository: $(imageRepository)
+        dockerfile: $(dockerfilePath)
+        containerRegistry: $(dockerRegistryServiceConnection)
+        arguments: --build-arg COMPANY_USER=$(USER) --build-arg COMPANY_HOST=$(HOST) --build-arg COMPANY_DB=$(DB) --build-arg COMPANY_PASSWORD=$(PASSWORD) --build-arg COMPANY_JWT=$(JWT_SECRET)
+        tags: |
+          $(tag)
+
     - template: pipeline_templates/secure_code_scan.yml@appsectemplates
       parameters:
-        
         scanSonarCloud: true
         sonarCloudGate: false
         SCServiceConnection: 'SonarcloudServer'
-
-# - job: Build
-#   displayName: Build
-#   pool:
-#     vmImage: $(vmImageName)
-
-# stages:
-# - stage: Build
-#   displayName: Build stage
-#   jobs:
-
-#     - task: Npm@1
-#       inputs:
-#         command: 'install'
-#         #workingDir: '.'
-#         workingDir: './$(Build.Repository.Name)'
-
-#     - task: Docker@2
-#       displayName: Build #and push an image to container registry
-#       inputs:
-#         command: build #AndPush
-#         repository: $(imageRepository)
-#         dockerfile: $(dockerfilePath)
-#         containerRegistry: $(dockerRegistryServiceConnection)
-#         arguments: --build-arg COMPANY_USER=$(USER) --build-arg COMPANY_HOST=$(HOST) --build-arg COMPANY_DB=$(DB) --build-arg COMPANY_PASSWORD=$(PASSWORD) --build-arg COMPANY_JWT=$(JWT_SECRET)
-#         tags: |
-#           $(tag)
-
-  # - template: pipeline_templates/secure_code_scan.yml@appsectemplates
-  #   parameters:
-  #       scanSonarCloud: true
-  #       sonarCloudGate: false
-  #       SCServiceConnection: 'SonarcloudServer'
-
+  
         scanSnyk: true
         SKFailOnIssues: false
         SkServiceConnection: 'SnykServer'
