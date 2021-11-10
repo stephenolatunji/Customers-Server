@@ -111,7 +111,7 @@ jobs:
         repository: $(imageRepository)
         dockerfile: $(dockerfilePath)
         containerRegistry: $(dockerRegistryServiceConnection)
-        arguments: --build-arg COMPANY_USER=$(USER) --build-arg COMPANY_HOST=$(HOST) --build-arg COMPANY_DB=$(DB) --build-arg COMPANY_PASSWORD=$(PASSWORD) --build-arg COMPANY_JWT=$(JWT_SECRET)
+        arguments: --build-arg CUSTOMER_USER=$(USER) --build-arg CUSTOMER_HOST=$(HOST) --build-arg CUSTOMER_DB=$(DB) --build-arg CUSTOMER_PASSWORD=$(PASSWORD) --build-arg CUSTOMER_JWT=$(JWT_SECRET) --build-arg CUSTOMER_PORT=80
         tags: |
             $(tag)
       
