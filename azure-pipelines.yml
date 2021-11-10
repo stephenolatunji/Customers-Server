@@ -34,13 +34,13 @@ variables:
   value: '/CxServer/AB-InBev/AFR/DMS'
 
 jobs:
-- job: SecureScan
-  displayName: SecureScan
-  pool:
-    vmImage: 'ubuntu-latest'
-  steps:
-    - checkout: self
-    - checkout: appsectemplates
+# - job: SecureScan
+#   displayName: SecureScan
+#   pool:
+#     vmImage: 'ubuntu-latest'
+#   steps:
+#     - checkout: self
+#     - checkout: appsectemplates
 
     # - template: pipeline_templates/Security_tasks/prepareSonarCloud.yml@appsectemplates
     #   parameters:
@@ -50,16 +50,16 @@ jobs:
     #     SCBranchName: '$(Build.SourceBranchName)'
     #     SCBaseDirPath: './$(Build.Repository.Name)'
 
-    - task: Docker@2
-      displayName: Build #and push an image to container registry
-      inputs:
-        command: build #AndPush
-        repository: $(imageRepository)
-        dockerfile: $(dockerfilePath)
-        containerRegistry: $(dockerRegistryServiceConnection)
-        arguments: --build-arg COMPANY_USER=$(USER) --build-arg COMPANY_HOST=$(HOST) --build-arg COMPANY_DB=$(DB) --build-arg COMPANY_PASSWORD=$(PASSWORD) --build-arg COMPANY_JWT=$(JWT_SECRET)
-        tags: |
-          $(tag)
+    # - task: Docker@2
+    #   displayName: Build #and push an image to container registry
+    #   inputs:
+    #     command: build #AndPush
+    #     repository: $(imageRepository)
+    #     dockerfile: $(dockerfilePath)
+    #     containerRegistry: $(dockerRegistryServiceConnection)
+    #     arguments: --build-arg COMPANY_USER=$(USER) --build-arg COMPANY_HOST=$(HOST) --build-arg COMPANY_DB=$(DB) --build-arg COMPANY_PASSWORD=$(PASSWORD) --build-arg COMPANY_JWT=$(JWT_SECRET)
+    #     tags: |
+    #       $(tag)
 
     # - template: pipeline_templates/secure_code_scan.yml@appsectemplates
     #   parameters:
@@ -87,16 +87,8 @@ jobs:
     #     CxTeamName: $(checkmarxTeam)
 
 
-# - job: Build
-#   displayName: Build
-#   pool:
-#     name: 'AFR_Non_Prod_Self_hosted_Pool'
-#     demands: 
-#     - agent.os -equals Linux
-
-
-- job: Build
-  displayName: Build
+- job: Deploy
+  displayName: Deploy
   pool:
     name: 'AFR_Non_Prod_Self_hosted_Pool'
     demands: 
