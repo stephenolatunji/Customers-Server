@@ -97,13 +97,6 @@ jobs:
   steps:
     - checkout: self
 
-    - task: CmdLine@2
-      inputs:
-        script: |
-          pwd
-          cd $(Agent.BuildDirectory)
-          pwd
-
     - task: Docker@2
       displayName: Build
       inputs:
