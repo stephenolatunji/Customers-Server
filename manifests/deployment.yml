@@ -16,6 +16,6 @@ spec:
         "kubernetes.io/os": linux      
       containers:
         - name: dmscustomerservice 
-          image: microservicesacrafrdev.azurecr.io/dmscustomerservice:latest
+          image: microservicesacrafrdev.azurecr.io/dmscustomerservice
           ports:
           - containerPort: 80
