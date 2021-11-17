@@ -19,7 +19,7 @@ variables:
   value: '**/Dockerfile'
 
 - name: 'tag'
-  value: 'latest'
+  value: '$(Build.BuildNumber)'
 
 - name: 'vmImageName'
   value: 'ubuntu-latest'
@@ -117,13 +117,13 @@ jobs:
           tags: |
             $(tag)
   
-    - task: KubernetesManifest@0
-      inputs:
-        action: 'deploy'
-        kubernetesServiceConnection: 'AFR DEV-AFR_WEB_Distributor Management System (DMS)'
-        namespace: 'dms'
-        manifests: |
-          manifests/deployment.yml 
-          manifests/service.yml
+    # - task: KubernetesManifest@0
+    #   inputs:
+    #     action: 'deploy'
+    #     kubernetesServiceConnection: 'AFR DEV-AFR_WEB_Distributor Management System (DMS)'
+    #     namespace: 'dms'
+    #     manifests: |
+    #       manifests/deployment.yml 
+    #       manifests/service.yml
 
 
