@@ -8,7 +8,7 @@ resources:
     name: DevSecOps/DevSecOps
 
 variables:
-- group: CustomerService
+- group: CustomerServiceQA
 - name: dockerRegistryServiceConnection
   value: 'ACR-QA'
 
