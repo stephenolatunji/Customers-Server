@@ -3,19 +3,19 @@ kind: Deployment
 metadata:
   name: dmscustomerservice 
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
-      app: dmscustomerservice
+      app: dmscustomerserviceqa
   template:
     metadata:
       labels:
-        app: dmscustomerservice 
+        app: dmscustomerserviceqa 
     spec:
       nodeSelector:
         "kubernetes.io/os": linux      
       containers:
         - name: dmscustomerservice 
-          image: microservicesacrafrqa.azurecr.io/dmscustomerservice
+          image: microservicesacrafrqa.azurecr.io/dmscustomerserviceqa
           ports:
           - containerPort: 80
