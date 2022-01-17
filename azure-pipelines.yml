@@ -13,7 +13,7 @@ variables:
   value: 'ACR-QA'
 
 - name: imageRepository
-  value: 'dmscustomerservice'
+  value: 'dmscustomerserviceqa'
 
 - name: dockerfilePath
   value: '**/Dockerfile'
@@ -25,7 +25,7 @@ variables:
   value: 'ubuntu-latest'
 
 - name: 'sonarName'
-  value: 'DMS-CustomerService'
+  value: 'DMS-CustomerServiceQA'
 
 - name: 'ACR'
   value: 'microservicesacrafrqa.azurecr.io'
