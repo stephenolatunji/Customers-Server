@@ -6,8 +6,8 @@ const router = express.Router();
 router.route('/getall')
     .get(async(req, res)=>{
         try{
-            await connectDB.query(`SELECT * FROM cust_tb`,(err, results) =>{
-                if(results.rowsAffected > 0){
+            await connectDB.query(`EXEC getAllCustomer`,(err, results) =>{
+                if(results.recordset.length > 0){
                     res.status(200).json({success: true, msg: 'Customers found!', result: results.recordset});
                }
                 else{
@@ -27,8 +27,8 @@ router.route('/distributor/:code')
 
         try{
             
-            await connectDB.query(`SELECT * FROM cust_tb WHERE DIST_Code = '${distCode}'`, (err, results) =>{
-                if(results.rowsAffected > 0){
+            await connectDB.query(`EXEC getCustomerByDistributorCode @distributorCode= '${distCode}'`, (err, results) =>{
+                if(results.recordset.length > 0){
                     res.status(200).json({success: true, msg: 'Customers found!', result: results.recordset});
                }
                 else{
@@ -47,8 +47,8 @@ router.route('/:id')
 
         try{
             
-            await connectDB.query(`SELECT * FROM cust_tb WHERE id = '${id}'`, (err, results) =>{
-                if(results.rowsAffected > 0){
+            await connectDB.query(`EXEC getCustomersById @id = '${id}'`, (err, results) =>{
+                if(results.recordset.length > 0){
                     res.status(200).json({success: true, msg: 'Customer found!', result: results.recordset[0]});
                }
                 else{
@@ -68,8 +68,8 @@ router.route('/salesforce/:id')
 
         try{
             
-            await connectDB.query(`SELECT * FROM cust_tb WHERE SF_Code = '${id}'`, (err, results) =>{
-                if(results.rowsAffected > 0){
+            await connectDB.query(`EXEC getcustomersBySalesforceId @salesforceId = '${id}'`, (err, results) =>{
+                if(results.recordset.length > 0){
                     res.status(200).json({success: true, msg: 'Customer found!', result: results.recordset});
                }
                 else{
@@ -88,7 +88,7 @@ router.route('/status/:status')
 
         try{
             
-            await connectDB.query(`SELECT * FROM cust_tb WHERE status = '${status}'`, (err, results) =>{
+            await connectDB.query(`EXEC getCustomerByStatus @status = '${status}'`, (err, results) =>{
                 if(results.rowsAffected > 0){
                     res.status(200).json({success: true, msg: 'Customers found!', result: results.recordset});
                }
@@ -102,5 +102,24 @@ router.route('/status/:status')
         }
     });
 
+router.route('/get-by-lastdigit/:country')
+    .post(async(req, res) =>{
+        const sfDigit = req.body.sfDigit;
+        const country = req.params.country;
+
+        try{
+            await connectDB.query(`SELECT * FROM cust_tb2 WHERE digits = '${sfDigit}' AND country = '${country}'`, (err, results) =>{
+                if(results.recordset.length > 0){
+                   return res.status(200).json({success: true, msg: 'Customers found!', results: results.recordset})
+                }
+                else{
+                    return res.status(404).json({success: false, msg: 'Customer with code not found'})
+                }
+            })
+
+        }catch(err){
+            res.status(500).json({success: false, err})
+        }
+    })
 
 module.exports = router;
