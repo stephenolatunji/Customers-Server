@@ -8,12 +8,12 @@ router.route('/status/:id')
         const id = req.params.id
         try{
             if(status == 'Active' || status == 'Inactive' || status == 'Blocked'){
-                await connectDB.query(`SELECT * from cust_tb WHERE id = '${id}'`, (err, result) =>{
+                await connectDB.query(`EXEC selectCountId @id = '${id}'`, (err, result) =>{
                     if(result.recordset.length < 1){
                         return res.status(400).json({success: false, msg: 'Can not find customer', err});
                     }
                     else{
-                        connectDB.query(`UPDATE cust_tb SET status = '${status}' WHERE id = '${id}'`, (err, results) =>{
+                        connectDB.query(`EXEC updateCustomerStatus @status = '${status}', @id = '${id}'`, (err, results) =>{
                             if(results.affectedRows > 0){
                                 return res.status(200).json({success: true, msg: "Customer's status updated"});
                             }
@@ -40,7 +40,7 @@ router.route('/profile/:id')
         const data = req.body;
 
         try{
-            await connectDB.query(`SELECT * FROM cust_tb WHERE id = '${id}'`, (err, results)=>{
+            await connectDB.query(`EXEC selectCountId @id = '${id}'`, (err, results)=>{
                 if(results.recordset.length > 0){
                     connectDB.query(`UPDATE cust_tb SET ? WHERE id = '${id}'`, data, (err, results) =>{console.log(results);
                         if(results.rowsAffected.length > 0){
