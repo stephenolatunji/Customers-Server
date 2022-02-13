@@ -122,4 +122,25 @@ router.route('/get-by-lastdigit/:country')
         }
     })
 
+
+router.route('/getbycountry/:country')
+    .get(async(req, res) =>{
+        const country = req.params.country;
+
+        try{
+            
+            await connectDB.query(`EXEC getCustomersByCountry @country = '${country}'`, (err, results) =>{console.log(results);
+                if(results.recordset.length > 0){
+                    res.status(200).json({success: true, msg: 'Customers found!', result: results.recordset});
+               }
+                else{
+                    res.status(400).json({success: false, msg: `No Customer found in this country `, err});
+                }
+            });
+        }
+        catch(err){
+            res.status(500).json({success: false, err, msg: 'Server Error'})
+        }
+    })
+
 module.exports = router;
