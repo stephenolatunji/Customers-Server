@@ -8,12 +8,12 @@ resources:
     name: DevSecOps/DevSecOps
 
 variables:
-- group: CustomerServiceQA
+- group: CustomerServicePROD
 - name: dockerRegistryServiceConnection
   value: 'ACR-PROD'
 
 - name: imageRepository
-  value: 'dmscustomerserviceprd'
+  value: 'dmscustomerserviceprod'
 
 - name: dockerfilePath
   value: '**/Dockerfile'
