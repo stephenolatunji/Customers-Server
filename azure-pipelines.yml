@@ -1,5 +1,5 @@
 trigger:
-- qa
+- production
 
 resources:
   repositories:
@@ -10,10 +10,10 @@ resources:
 variables:
 - group: CustomerServiceQA
 - name: dockerRegistryServiceConnection
-  value: 'ACR-QA'
+  value: 'ACR-PROD'
 
 - name: imageRepository
-  value: 'dmscustomerserviceqa'
+  value: 'dmscustomerserviceprd'
 
 - name: dockerfilePath
   value: '**/Dockerfile'
@@ -25,10 +25,10 @@ variables:
   value: 'ubuntu-latest'
 
 - name: 'sonarName'
-  value: 'DMS-CustomerServiceQA'
+  value: 'DMS-CustomerServicePROD'
 
 - name: 'ACR'
-  value: 'microservicesacrafrqa.azurecr.io'
+  value: 'microservicesacrafrprd.azurecr.io'
 
 - name: 'checkmarxTeam'
   value: '/CxServer/AB-InBev/AFR/DMS'
