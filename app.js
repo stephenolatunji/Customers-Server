@@ -27,11 +27,11 @@ const ONEOFFCUSTOMER = require('./Routes/oneoff');
 app.get('/', (req, res) => {
     res.send('Welcome to DMS!')
 });
-app.use('customer-ms/register', REGISTER);
-app.use('customer-ms/customer', CUSTOMER);
-app.use('customer-ms/updatecustomer', UPDATE);
-app.use('customer-ms/uploadcsv', UPLOADCSV);
-app.use('customer-ms/oneoff-customer', ONEOFFCUSTOMER);
+app.use('/customer-ms/register', REGISTER);
+app.use('/customer-ms/customer', CUSTOMER);
+app.use('/customer-ms/updatecustomer', UPDATE);
+app.use('/customer-ms/uploadcsv', UPLOADCSV);
+app.use('/customer-ms/oneoff-customer', ONEOFFCUSTOMER);
 
 const port = process.env.PORT || 80;
 
