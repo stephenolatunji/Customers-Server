@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: Service
 metadata:
-    name: dmscustomerserviceqa
+    name: dmscustomerserviceprod
 spec:
     ports:
     - port: 80 
     selector:
-        app: dmscustomerserviceqa
+        app: dmscustomerserviceprod
