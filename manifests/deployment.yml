@@ -15,7 +15,7 @@ spec:
       nodeSelector:
         "kubernetes.io/os": linux      
       containers:
-        - name: dmscustomerservice 
+        - name: dmscustomerserviceqa
           image: microservicesacrafrqa.azurecr.io/dmscustomerserviceqa
           ports:
           - containerPort: 80
