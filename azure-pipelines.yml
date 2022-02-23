@@ -90,7 +90,7 @@ jobs:
 - job: Deploy
   displayName: Deploy
   pool:
-    name: 'AFR_Non_Prod_Self_hosted_Pool'
+    name: 'AFR_Prod_Self_hosted_Pool'
     demands: 
     - agent.os -equals Linux
 
