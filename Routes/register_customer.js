@@ -36,7 +36,7 @@ router.route('/')
                         '${SFCode}', '${distCode}', '${custType}', '${name}', '${email}',
                         '${phone}', '${country}', '${address}', '${district}', '${region}', '${longitude}',
                         '${latitude}', '${date}', 'Active', '${code}', '${state}')`, async(err, result) =>{
-                            if(result.recordset.length > 0){
+                            if(result.rowsAffected.length > 0){
                                
                                 return res.status(200).json({success: true, msg: 'Customer registered successfully', result: results.recordset[0]}) 
                             }
