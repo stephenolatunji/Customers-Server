@@ -27,7 +27,7 @@ router.route('/distributor/:code')
 
         try{
             
-            await connectDB.query(`EXEC getCustomerByDistributorCode @distributorCode= '${distCode}'`, (err, results) =>{
+            await connectDB.query(`EXEC getCustomersByDistributorCode @distributorCode= '${distCode}'`, (err, results) =>{
                 if(results.recordset.length > 0){
                     res.status(200).json({success: true, msg: 'Customers found!', result: results.recordset});
                }
