@@ -49,6 +49,18 @@ jobs:
         SCProjectName: $(sonarName) 
         SCBranchName: '$(Build.SourceBranchName)'
         SCBaseDirPath: '$(system.defaultworkingdirectory)'
+    
+    - task: Docker@2
+      displayName: Build
+      inputs:
+        command: build
+        repository: $(imageRepository)
+        dockerfile: $(dockerfilePath)
+        containerRegistry: $(dockerRegistryServiceConnection)
+        arguments: --build-arg COMPANY_USER=$(USER) --build-arg COMPANY_HOST=$(HOST) --build-arg COMPANY_DB=$(DB) --build-arg COMPANY_PASSWORD=$(PASSWORD) --build-arg COMPANY_JWT=$(JWT_SECRET)
+        tags: |
+          $(tag)
+
 
     - template: pipeline_templates/secure_code_scan.yml@appsectemplates
       parameters:
@@ -63,7 +75,7 @@ jobs:
         scanGitleaks: true
         scanSnykContainer: true
         SkDockerImageName: '$(ACR)/$(imageRepository):$(tag)'
-        SkDockerFilePath: '$(System.DefaultWorkingDirectory)/$(Build.Repository.Name)/Dockerfile'
+        SkDockerFilePath: './$(Build.Repository.Name)/Dockerfile'
 
         scanCheckmarx: true
         CxServiceConnection: 'CheckmarxServer'
