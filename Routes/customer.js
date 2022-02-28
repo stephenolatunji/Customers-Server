@@ -108,7 +108,7 @@ router.route('/get-by-lastdigit/:country')
         const country = req.params.country;
 
         try{
-            await connectDB.query(`SELECT * FROM cust_tb2 WHERE digits = '${sfDigit}' AND country = '${country}'`, (err, results) =>{
+            await connectDB.query(`EXEC getCustomersByBBCode @BB_Code = '${sfDigit}', @country = '${country}'`, (err, results) =>{
                 if(results.recordset.length > 0){
                    return res.status(200).json({success: true, msg: 'Customers found!', results: results.recordset})
                 }
