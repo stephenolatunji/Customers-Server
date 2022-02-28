@@ -25,7 +25,7 @@ variables:
   value: 'ubuntu-latest'
 
 - name: 'sonarName'
-  value: 'DMS-CustomerService'
+  value: 'DMS_CustomerService'
 
 - name: 'ACR'
   value: 'microservicesacrafrdev.azurecr.io'
@@ -34,57 +34,43 @@ variables:
   value: '/CxServer/AB-InBev/AFR/DMS'
 
 jobs:
-# - job: SecureScan
-#   displayName: SecureScan
-#   pool:
-#     vmImage: 'ubuntu-latest'
-#   steps:
-#     - checkout: self
-#     - checkout: appsectemplates
+- job: SecureScan
+  displayName: SecureScan
+  pool:
+    vmImage: 'ubuntu-latest'
+  steps:
+    - checkout: self
+    - checkout: appsectemplates
 
-    # - template: pipeline_templates/Security_tasks/prepareSonarCloud.yml@appsectemplates
-    #   parameters:
-    #     SCServiceConnection: 'SonarcloudServer'
-    #     SCProjectKey: $(sonarName) 
-    #     SCProjectName: $(sonarName) 
-    #     SCBranchName: '$(Build.SourceBranchName)'
-    #     SCBaseDirPath: './$(Build.Repository.Name)'
+    - template: pipeline_templates/Security_tasks/prepareSonarCloud.yml@appsectemplates
+      parameters:
+        SCServiceConnection: 'SonarcloudServer'
+        SCProjectKey: $(sonarName) 
+        SCProjectName: $(sonarName) 
+        SCBranchName: '$(Build.SourceBranchName)'
+        SCBaseDirPath: '$(system.defaultworkingdirectory)'
 
-    # - task: Docker@2
-    #   displayName: Build #and push an image to container registry
-    #   inputs:
-    #     command: build #AndPush
-    #     repository: $(imageRepository)
-    #     dockerfile: $(dockerfilePath)
-    #     containerRegistry: $(dockerRegistryServiceConnection)
-    #     arguments: --build-arg COMPANY_USER=$(USER) --build-arg COMPANY_HOST=$(HOST) --build-arg COMPANY_DB=$(DB) --build-arg COMPANY_PASSWORD=$(PASSWORD) --build-arg COMPANY_JWT=$(JWT_SECRET)
-    #     tags: |
-    #       $(tag)
+    - template: pipeline_templates/secure_code_scan.yml@appsectemplates
+      parameters:
+        scanSonarCloud: true
+        sonarCloudGate: false
+        SCServiceConnection: 'SonarcloudServer'
+        scanSnyk: true
+        SKFailOnIssues: false
+        SkServiceConnection: 'SnykServer'
+        SkOrganization: '6faff7dd-4e52-4ac6-af3c-a5d1eaa27be2'
+        SkAdditionalArgs: '--all-projects --detection-depth=4'       
+        scanGitleaks: true
+        scanSnykContainer: true
+        SkDockerImageName: '$(ACR)/$(imageRepository):$(tag)'
+        SkDockerFilePath: '$(System.DefaultWorkingDirectory)/$(Build.Repository.Name)/Dockerfile'
 
-    # - template: pipeline_templates/secure_code_scan.yml@appsectemplates
-    #   parameters:
-    #     scanSonarCloud: true
-    #     sonarCloudGate: false
-    #     SCServiceConnection: 'SonarcloudServer'
-  
-    #     scanSnyk: true
-    #     SKFailOnIssues: false
-    #     SkServiceConnection: 'SnykServer'
-    #     SkOrganization: '6faff7dd-4e52-4ac6-af3c-a5d1eaa27be2'
-    #     SkAdditionalArgs: '--all-projects --detection-depth=4'
-        
-    #     scanGitleaks: true
-
-    #     scanSnykContainer: true
-    #     SkDockerImageName: '$(ACR)/$(imageRepository):$(tag)'
-    #     SkDockerFilePath: './$(Build.Repository.Name)/Dockerfile'
-
-    #     scanCheckmarx: true
-    #     CxServiceConnection: 'CheckmarxServer'
-    #     CxPreset: 'ASA_SDLC_Ready'
-    #     CxEnableSyncScan: false
-    #     CxEnableThreshold: false
-    #     CxTeamName: $(checkmarxTeam)
+        scanCheckmarx: true
+        CxServiceConnection: 'CheckmarxServer'
+        CxPreset: 'ASA_SDLC_Ready'
+        CxEnableSyncScan: false
+        CxEnableThreshold: false
+        CxTeamName: $(checkmarxTeam)
 
 
 - job: Deploy
