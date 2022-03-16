@@ -1,4 +1,5 @@
 const express = require('express');
+const { reset } = require('nodemon');
 const connectDB = require('../config/db');
 const router = express.Router();
 
@@ -143,7 +144,7 @@ router.route('/getbycountry/:country')
         }
     })
 
-    router.route('/getcustomerbytype/:country/:type')
+router.route('/getcustomerbytype/:country/:type')
     .get(async(req, res) =>{
         const country = req.params.country;
         const type = req.params.type;
@@ -163,5 +164,86 @@ router.route('/getbycountry/:country')
             res.status(500).json({success: false, err, msg: 'Server Error'})
         }
     })
+
+
+router.route('/rate-customer')
+    .patch(async(req, res) =>{
+        const stars = req.body.stars;
+        const comment = req.body.comment;
+        const outletCode = req.body.outletCode;
+        const raterCode = req.body.raterCode;
+        const orderId = req.body.orderId;
+        const country = req.body.country;
+        const date = new Date().getFullYear()+'-'+(new Date().getMonth()+parseInt("1"))+'-'+new Date().getDate();
+
+        try{
+            if(stars > 0 && stars <= 5){
+                await connectDB.query(`EXEC customersComments @outletCode = '${outletCode}', @ratings = ${parseInt(stars)}, 
+                @ratersCode = '${raterCode}', @comment = '${comment}', @orderId = '${orderId}', @country = '${country}', @date = '${date}'`, async(err, result) => {
+                    if(result.recordset.length > 0){
+                        await connectDB.query(`EXEC getRatedCustomers @outletCode = ${outletCode}, @country = '${country}'`, async(err, results) =>{
+                            if(results.recordset.length > 0){
+                                const record = results.recordset[0];
+                                const raters = parseInt(record.raters + 1);
+                                const ratings = parseInt(record.ratings + stars);
+                                const currentRating = (parseFloat(ratings/raters)).toFixed(1);
+                                await connectDB.query(`EXEC updateCustomerRating @outletCode = '${outletCode}', @rating = ${ratings}, 
+                                @raters = ${raters}, @stars = ${currentRating}, @country = '${country}'`, async(err, results) =>{
+                                    if(results.rowsAffected > 0){
+                                        return res.status(200).json({success: true, result: results.recordset[0]})
+                                    }
+                                    else{
+                                        return res.status(400).json({success: false, msg: 'Rating failed'})
+                                    }
+                                })
+                            }
+                            else{
+                                await connectDB.query(`EXEC rateCustomer @outletCode = '${outletCode}', @rating = ${stars}, @stars = ${stars}, @raters = 1, @country = '${country}'`, (err, results) =>{
+                                    if(results.recordset.length > 0){
+                                        return res.status(200).json({success: true, result: results.recordset[0]})
+                                    }
+                                    else{
+                                        return reset.status(400).json({success: false, msg: 'Failed to rate'})
+                                    }
+                                })
+                            }
+                        })
+                    }
+                    else{
+                        return res.status(400).json({success: false, msg: 'Customer\'s rating failed'})
+                    }
+                })
+                
+            }
+            else{
+                return res.status(400).json({success: false, msg: 'Value must be within the range of 0 and 5'})
+            }
+        }
+        catch(err){
+            res.status(500).json({success: false, msg: 'Server error!'})
+        }
+    })
+
+    router.route('/getcustomer-rating')
+    .post(async(req, res) =>{
+        const country = req.body.country;
+        const outletCode = req.body.outletCode;
+
+        try{
+            
+            await connectDB.query(`EXEC getRatedCustomers @country = '${country}', @outletCode = '${outletCode}'`, (err, results) =>{
+                if(results.recordset.length > 0){
+                    res.status(200).json({success: true, result: results.recordset[0]});
+               }
+                else{
+                    res.status(400).json({success: false, msg: `No rating found for this customer`, err});
+                }
+            });
+        }
+        catch(err){
+            res.status(500).json({success: false, err, msg: 'Server Error'})
+        }
+    })
+
 
 module.exports = router;
