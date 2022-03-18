@@ -70,7 +70,7 @@ router.route('/update-phone')
             if(phoneNumber.length > 10){
                 connectDB.query(`EXEC updateCustomerPhone @phone = '${phoneNumber}', @code = '${code}'`, (err, results) =>{
                     if(results.recordset.length > 0){
-                        return res.status(200).json({success: true, msg: "Customer's phone updated"});
+                        return res.status(200).json({success: true, msg: "Customer's phone updated", result: results.recordset[0]});
                     }
                     else{
                         
