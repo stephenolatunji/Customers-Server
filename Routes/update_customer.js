@@ -61,4 +61,33 @@ router.route('/profile/:id')
         }
     })
 
+router.route('/update-phone')
+    .patch(async(req, res) =>{
+        const code = req.body.code;
+        const phoneNumber = req.body.phoneNumber;
+
+        try{
+            if(phoneNumber.length > 10){
+                connectDB.query(`EXEC updateCustomerPhone @phone = '${phoneNumber}', @code = '${code}'`, (err, results) =>{
+                    if(results.recordset.length > 0){
+                        return res.status(200).json({success: true, msg: "Customer's phone updated"});
+                    }
+                    else{
+                        
+                        return res.status(400).json({success: false, msg: "Customer's phone not updated", err});
+                    }
+                })
+            }
+            else{
+                res.status(400).json({success: false, msg: 'Please provide a valid number'})
+            }
+        }
+        catch(err){
+            res.status(500).json({success: false, msg: `Server Error ${err}`})
+        }
+    })
+
+
+    
+
 module.exports = router;
