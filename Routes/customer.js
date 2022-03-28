@@ -5,8 +5,53 @@ const router = express.Router();
 
 
 router.route('/getall')
-    .get(async(req, res)=>{
-        try{
+.get(async(req, res)=> {
+    try{
+        /* If query (page and limit, eg: -> apilink/getall?page=1&limit=5) paramters are passed,
+        the result will be customers who are newly created or updated
+        */
+        if (req.query.page && req.query.limit) {
+            const page = parseInt(req.query.page);
+            const limit = parseInt(req.query.limit);
+            let startIndex = (page - 1) * limit;
+            let endIndex = page * limit;
+            const sqlStatement_1 = `select count (*) as number_of_customers 
+                                    from cust_tb 
+                                    where convert(DATE, modified_at) = DATEADD(day, -1, convert(DATE, getdate()))`;
+
+            await connectDB.query(sqlStatement_1, async(err, results) => {
+                // console.log(results);
+                if (results.recordset[0].number_of_customers > 0) {
+                    numOfCustomers = results.recordset[0].number_of_customers;
+                    console.log(`>>> Number of customers is (${numOfCustomers}), starting index is (${startIndex}), and limt is (${endIndex}) <<<`);
+                    startIndex = numOfCustomers <= startIndex ? (numOfCustomers - 1) : startIndex;
+                    endIndex = numOfCustomers <= endIndex ? numOfCustomers : endIndex;
+                    console.log(`>>> After calculations #### Number of customers is (${numOfCustomers}), starting index is (${startIndex}), and limt is (${endIndex}) #### <<<`);
+                    const sqlStatement_2 = `select * 
+                                          from cust_tb 
+                                          where convert(DATE, modified_at) = DATEADD(day, -1, convert(DATE, getdate()))
+                                          order by id
+                                          offset ${startIndex} rows
+                                          fetch next ${endIndex} rows only`;
+
+                    await connectDB.query(sqlStatement_2, (err, results) => {
+                        // console.log(results);
+                        if (results.recordset.length > 0) {
+                            //res.status(200).json({success: true, msg: 'Customers found!', result: customers.slice(startIndex, endIndex)});
+                            res.status(200).json({success: true, msg: 'Customers found!', result: results.recordset});
+                        }
+                        else {
+                            res.status(400).json({success: false, msg: 'Customers not found', err});
+                        }
+                    })
+               }
+                else{
+                    res.status(400).json({success: false, msg: 'Customers not found', err});
+                }
+            })
+
+        /* else return all customers existing in the DB */
+        } else{
             await connectDB.query(`EXEC getAllCustomer`,(err, results) =>{
                 if(results.recordset.length > 0){
                     res.status(200).json({success: true, msg: 'Customers found!', result: results.recordset});
@@ -16,10 +61,11 @@ router.route('/getall')
                 }
             })
         }
-        catch(err){
-            res.status(500).json({success: false, msg: 'Server Error', err});
-        }
-    });
+    }
+    catch(err){
+        res.status(500).json({success: false, msg: 'Server Error', err});
+    }
+});
 
 
 router.route('/distributor/:code')
