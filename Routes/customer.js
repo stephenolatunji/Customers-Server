@@ -15,11 +15,8 @@ router.route('/getall')
             const limit = parseInt(req.query.limit);
             let startIndex = (page - 1) * limit;
             let endIndex = page * limit;
-            const sqlStatement_1 = `select count (*) as number_of_customers 
-                                    from cust_tb 
-                                    where convert(DATE, modified_at) = DATEADD(day, -1, convert(DATE, getdate()))`;
 
-            await connectDB.query(sqlStatement_1, async(err, results) => {
+            await connectDB.query(`EXEC getNumberModifiedCustomers`, async(err, results) => {
                 // console.log(results);
                 if (results.recordset[0].number_of_customers > 0) {
                     numOfCustomers = results.recordset[0].number_of_customers;
@@ -27,14 +24,8 @@ router.route('/getall')
                     startIndex = numOfCustomers <= startIndex ? (numOfCustomers - 1) : startIndex;
                     endIndex = numOfCustomers <= endIndex ? numOfCustomers : endIndex;
                     console.log(`>>> After calculations #### Number of customers is (${numOfCustomers}), starting index is (${startIndex}), and limt is (${endIndex}) #### <<<`);
-                    const sqlStatement_2 = `select * 
-                                          from cust_tb 
-                                          where convert(DATE, modified_at) = DATEADD(day, -1, convert(DATE, getdate()))
-                                          order by id
-                                          offset ${startIndex} rows
-                                          fetch next ${endIndex} rows only`;
 
-                    await connectDB.query(sqlStatement_2, (err, results) => {
+                    await connectDB.query(`EXEC getModifiedCustomersByPagination @startIndex = '${startIndex}', @endIndex = '${endIndex}'`, (err, results) => {
                         // console.log(results);
                         if (results.recordset.length > 0) {
                             //res.status(200).json({success: true, msg: 'Customers found!', result: customers.slice(startIndex, endIndex)});
