@@ -282,5 +282,26 @@ router.route('/rate-customer')
         }
     })
 
+    router.route('/bdr-customers')
+    .post(async(req, res) =>{
+        const country = req.body.country;
+        const email = req.body.email;
+
+        try{
+            
+            await connectDB.query(`EXEC getBDROutlets @country = '${country}', @email = '${email}'`, (err, results) =>{
+                if(results.recordset.length > 0){
+                    res.status(200).json({success: true, result: results.recordset});
+               }
+                else{
+                    res.status(400).json({success: false, msg: `BDR has no customer`, err});
+                }
+            });
+        }
+        catch(err){
+            res.status(500).json({success: false, err, msg: 'Server Error'})
+        }
+    })
+
 
 module.exports = router;
