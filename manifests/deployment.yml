@@ -1,21 +1,21 @@
 apiVersion : apps/v1
 kind: Deployment
 metadata:
-  name: dmscustomerservice 
+  name: dmscustomerserviceqa 
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
-      app: dmscustomerservice
+      app: dmscustomerserviceqa
   template:
     metadata:
       labels:
-        app: dmscustomerservice 
+        app: dmscustomerserviceqa 
     spec:
       nodeSelector:
         "kubernetes.io/os": linux      
       containers:
-        - name: dmscustomerservice 
-          image: microservicesacrafrdev.azurecr.io/dmscustomerservice
+        - name: dmscustomerserviceqa
+          image: microservicesacrafrqa.azurecr.io/dmscustomerserviceqa
           ports:
           - containerPort: 80

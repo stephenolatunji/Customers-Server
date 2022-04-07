@@ -1,5 +1,5 @@
 trigger:
-- devsecops-enablement
+- qa
 
 resources:
   repositories:
@@ -8,12 +8,12 @@ resources:
     name: DevSecOps/DevSecOps
 
 variables:
-- group: CustomerService
+- group: CustomerServiceQA
 - name: dockerRegistryServiceConnection
-  value: 'ACR-Dev'
+  value: 'ACR-QA'
 
 - name: imageRepository
-  value: 'dmscustomerservice'
+  value: 'dmscustomerserviceqa'
 
 - name: dockerfilePath
   value: '**/Dockerfile'
@@ -25,10 +25,10 @@ variables:
   value: 'ubuntu-latest'
 
 - name: 'sonarName'
-  value: 'DMS-CustomerService'
+  value: 'DMS-CustomerServiceQA'
 
 - name: 'ACR'
-  value: 'microservicesacrafrdev.azurecr.io'
+  value: 'microservicesacrafrqa.azurecr.io'
 
 - name: 'checkmarxTeam'
   value: '/CxServer/AB-InBev/AFR/DMS'
