@@ -1,12 +1,9 @@
 apiVersion: v1
 kind: Service
 metadata:
-    name: dmscustomerservice
-    annotations:
-        service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+    name: dmscustomerserviceqa
 spec:
-    type: LoadBalancer
     ports:
     - port: 80 
     selector:
-        app: dmscustomerservice
+        app: dmscustomerserviceqa
