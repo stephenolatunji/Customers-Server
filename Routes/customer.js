@@ -66,10 +66,11 @@ router.route('/:id')
 router.route('/salesforce/:id')
     .get(async(req, res) =>{
         const id = req.params.id;
+        const country = req.body.country;
 
         try{
             
-            await connectDB.query(`EXEC getcustomersBySalesforceId @salesforceId = '${id}'`, (err, results) =>{
+            await connectDB.query(`EXEC getcustomersBySalesforceId @salesforceId = '${id}', @country = '${country}'`, (err, results) =>{
                 if(results.recordset.length > 0){
                     res.status(200).json({success: true, msg: 'Customer found!', result: results.recordset});
                }
