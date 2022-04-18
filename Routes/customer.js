@@ -262,46 +262,78 @@ router.route('/rate-customer')
         }
     })
 
-    router.route('/getcustomer-rating')
-    .post(async(req, res) =>{
-        const country = req.body.country;
-        const outletCode = req.body.outletCode;
+router.route('/getcustomer-rating')
+.post(async(req, res) =>{
+    const country = req.body.country;
+    const outletCode = req.body.outletCode;
 
-        try{
-            
-            await connectDB.query(`EXEC getRatedCustomers @country = '${country}', @outletCode = '${outletCode}'`, (err, results) =>{
-                if(results.recordset.length > 0){
-                    res.status(200).json({success: true, result: results.recordset[0]});
-               }
-                else{
-                    res.status(400).json({success: false, msg: `No rating found for this customer`, err});
+    try{
+        
+        await connectDB.query(`EXEC getRatedCustomers @country = '${country}', @outletCode = '${outletCode}'`, (err, results) =>{
+            if(results.recordset.length > 0){
+                res.status(200).json({success: true, result: results.recordset[0]});
+            }
+            else{
+                res.status(400).json({success: false, msg: `No rating found for this customer`, err});
+            }
+        });
+    }
+    catch(err){
+        res.status(500).json({success: false, err, msg: 'Server Error'})
+    }
+})
+
+router.route('/bdr-customers')
+.post(async(req, res) =>{
+    const country = req.body.country;
+    const email = req.body.email;
+
+    try{
+        
+        await connectDB.query(`EXEC getBDROutlets @country = '${country}', @email = '${email}'`, (err, results) =>{
+            if(results.recordset.length > 0){
+                res.status(200).json({success: true, result: results.recordset});
+            }
+            else{
+                res.status(400).json({success: false, msg: `BDR has no customer`, err});
+            }
+        });
+    }
+    catch(err){
+        res.status(500).json({success: false, err, msg: 'Server Error'})
+    }
+})
+
+router.route('/getbydistributor-array')
+    .post(async(req, res) => {
+       const distCodes = req.body.dist;
+       let xc = [];
+       try{
+            if(Array.isArray(distCodes)){
+                for (i = 0; i < distCodes.length; i++){
+                
+                    const codes = distCodes[i]
+                    await connectDB.query(`EXEC getCustomersByDistributorCode @distributorCode = '${codes}'`, (err, result)=>{
+                        if(result.recordset.length > 0){
+                            xc = [...xc, result.recordset]
+                        }
+                        else{
+                            console.log(`No customer assigned to ${codes}`)
+                        }
+                    })
+                    
                 }
-            });
-        }
-        catch(err){
-            res.status(500).json({success: false, err, msg: 'Server Error'})
-        }
-    })
-
-    router.route('/bdr-customers')
-    .post(async(req, res) =>{
-        const country = req.body.country;
-        const email = req.body.email;
-
-        try{
-            
-            await connectDB.query(`EXEC getBDROutlets @country = '${country}', @email = '${email}'`, (err, results) =>{
-                if(results.recordset.length > 0){
-                    res.status(200).json({success: true, result: results.recordset});
-               }
-                else{
-                    res.status(400).json({success: false, msg: `BDR has no customer`, err});
-                }
-            });
-        }
-        catch(err){
-            res.status(500).json({success: false, err, msg: 'Server Error'})
-        }
+                setTimeout(() => {
+                    res.status(200).json({success: true, results: xc })
+                }, 2000);
+            }else{
+                return res.status(400).json({success: false, msg: 'Please enter a valid data type'})
+            }
+       }
+       catch(err){
+        res.status(500).json({success: false, msg: 'Server Error'})
+       }
+       
     })
 
 
