@@ -324,7 +324,7 @@ router.route('/getbydistributor-array')
                     
                 }
                 setTimeout(() => {
-                    res.status(200).json({success: true, results: xc })
+                    res.status(200).json({success: true, results: xc.flat() })
                 }, 2000);
             }else{
                 return res.status(400).json({success: false, msg: 'Please enter a valid data type'})
