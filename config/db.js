@@ -2,9 +2,9 @@ const sql = require('mssql');
 require('dotenv').config();
 
 const config = {
-    server: process.env.HOST_QA,
-    user: 'sqlAdmin',
-    password: process.env.PASSWORD_QA,
+    server: process.env.HOST,
+    user: process.env.USER,
+    password: process.env.PASSWORD,
     database: process.env.DB,
     options: {encrypt: true, trustServerCertificate: false},
 }
