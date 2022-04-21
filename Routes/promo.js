@@ -16,14 +16,16 @@ router.route('/create-dream')
             @dreamName = '${dreamName}', @dreamPoint = '${dreamPoint}', @dreamDuration = '${dreamDuration}',
             @date = '${date}'`, (err, result) =>{
                     if(result.recordset.length > 0){
-                        res.status(200).json({success: true, results: result.recordset[0]})
+                        return res.status(200).json({success: true, results: result.recordset[0]})
                     }
                     else{
-                        res.status(400).json({success: false, msg: 'Error creating dream'})
+                       return res.status(400).json({success: false, msg: 'Error creating dream'})
                     }
                 })
         }
-        catch(err){}
+        catch(err){
+            res.status(500).json({success: false, err, msg: 'Server Error'})
+        }
     })
 
     router.route('/getdream')
@@ -42,7 +44,36 @@ router.route('/create-dream')
             })
 
         }catch(err){
-            res.status(500).json({success: false, err})
+            res.status(500).json({success: false, err, msg: 'Server Error'})
         }
     })
+
+    router.route('/update-points')
+        .patch(async(req, res) =>{
+            const BB_Code = req.body.BB_Code;
+            const points = req.body.points;
+            const country = req.body.country;
+
+            try{
+                await connectDB.query(`EXEC getMyDream @BB_Code = '${BB_Code}', @country = '${country}'`, async(err, results) =>{
+                    if(results.recordset.length > 0){
+                        let accumPoint = results.recordset.accumulated_points;
+                        accumPoint = parseInt(points + accumPoint)
+                        await connectDB.query(`EXEC updateDreamPoints @BB_Code = '${BB_Code}', @points = ${accumPoint}`, (err, result) =>{
+                            if (result.recordset.length > 0) {
+                                return res.status(200).json({success: true, msg: 'Points Updated Successfully', results: results.recordset})
+                                
+                            }
+                            else{
+                                return res.status(404).json({success: false, msg: 'Can not update'})
+                            }
+                        })
+                    }
+                })
+                
+            }
+            catch(err){
+
+            }
+        })
     module.exports = router;
