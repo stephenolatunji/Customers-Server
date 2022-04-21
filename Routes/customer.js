@@ -1,5 +1,4 @@
 const express = require('express');
-const { reset } = require('nodemon');
 const connectDB = require('../config/db');
 const router = express.Router();
 
