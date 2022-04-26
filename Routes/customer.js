@@ -226,7 +226,7 @@ router.route('/rate-customer')
                                 const currentRating = (parseFloat(ratings/raters)).toFixed(1);
                                 await connectDB.query(`EXEC updateCustomerRating @outletCode = '${outletCode}', @rating = ${ratings}, 
                                 @raters = ${raters}, @stars = ${currentRating}, @country = '${country}'`, async(err, results) =>{
-                                    if(results.rowsAffected > 0){
+                                    if(results.recordset.length > 0){
                                         return res.status(200).json({success: true, result: results.recordset[0]})
                                     }
                                     else{
