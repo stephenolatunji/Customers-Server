@@ -1,5 +1,5 @@
 trigger:
-- qa
+- production
 
 resources:
   repositories:
@@ -8,12 +8,12 @@ resources:
     name: DevSecOps/DevSecOps
 
 variables:
-- group: CustomerServiceQA
+- group: CustomerServicePROD
 - name: dockerRegistryServiceConnection
-  value: 'ACR-QA'
+  value: 'ACR-PROD'
 
 - name: imageRepository
-  value: 'dmscustomerserviceqa'
+  value: 'dmscustomerserviceprod'
 
 - name: dockerfilePath
   value: '**/Dockerfile'
@@ -25,10 +25,10 @@ variables:
   value: 'ubuntu-latest'
 
 - name: 'sonarName'
-  value: 'DMS-CustomerServiceQA'
+  value: 'DMS-CustomerServicePROD'
 
 - name: 'ACR'
-  value: 'microservicesacrafrqa.azurecr.io'
+  value: 'microservicesacrafrprd.azurecr.io'
 
 - name: 'checkmarxTeam'
   value: '/CxServer/AB-InBev/AFR/DMS'
@@ -90,7 +90,7 @@ jobs:
 - job: Deploy
   displayName: Deploy
   pool:
-    name: 'AFR_Non_Prod_Self_hosted_Pool'
+    name: 'AFR_Prod_Self_hosted_Pool'
     demands: 
     - agent.os -equals Linux
 
