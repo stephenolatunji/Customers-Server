@@ -8,20 +8,13 @@ router.route('/status/:id')
         const id = req.params.id
         try{
             if(status == 'Active' || status == 'Inactive' || status == 'Blocked'){
-                await connectDB.query(`EXEC selectCountId @id = '${id}'`, (err, result) =>{
-                    if(result.recordset.length < 1){
-                        return res.status(400).json({success: false, msg: 'Can not find customer', err});
+                connectDB.query(`EXEC updateCustomerStatus @status = '${status}', @id = '${id}'`, (err, results) =>{
+                    if(results.recordset.length > 0){
+                        return res.status(200).json({success: true, msg: "Customer's status updated", result: results.recordset[0]});
                     }
                     else{
-                        connectDB.query(`EXEC updateCustomerStatus @status = '${status}', @id = '${id}'`, (err, results) =>{
-                            if(results.affectedRows > 0){
-                                return res.status(200).json({success: true, msg: "Customer's status updated"});
-                            }
-                            else{
-                                
-                                return res.status(400).json({success: false, msg: "Customer status not updated", err});
-                            }
-                        })
+                        
+                        return res.status(400).json({success: false, msg: "Customer status not updated", err});
                     }
                 })
             }

@@ -27,7 +27,6 @@ router.route('/')
             const split_type = custType.charAt(0).toUpperCase();
 
             const code = `${split_type}${split_type}${split_name}${random}`;
-            console.log(code);
         try{
             await connectDB.query(`EXEC selectCountSFCode @salesforceCode = '${SFCode}'`, async(err, results) =>{
                 if(!results.recordset[0]['']){

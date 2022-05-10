@@ -23,6 +23,7 @@ const CUSTOMER = require('./Routes/customer');
 const UPDATE = require('./Routes/update_customer');
 const UPLOADCSV = require('./Routes/registerByCSV');
 const ONEOFFCUSTOMER = require('./Routes/oneoff');
+const PROMO = require('./Routes/promo')
 
 app.get('/', (req, res) => {
     res.send('Welcome to DMS!')
@@ -32,6 +33,7 @@ app.use('/customer', CUSTOMER);
 app.use('/updatecustomer', UPDATE);
 app.use('/uploadcsv', UPLOADCSV);
 app.use('/oneoff-customer', ONEOFFCUSTOMER);
+app.use('/mydream', PROMO);
 
 const port = process.env.PORT || 80;
 
