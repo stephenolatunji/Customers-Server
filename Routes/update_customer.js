@@ -80,7 +80,25 @@ router.route('/update-phone')
         }
     })
 
+    router.route('/update-dist/change-dist')
+    .patch(async( req, res) => {
+        const sfCode = req.body.sfCode;
+        const distCode = req.body.distCode;
 
-    
+        try{
+            connectDB.query(`EXEC updateCustomerDistributor @SF_Code = '${sfCode}', @Dist_Code = '${distCode}'`, (err, results) =>{
+                if(results.recordset.length > 0){
+                    return res.status(200).json({success: true, msg: "Customer's Distributor updated", result: results.recordset[0]});
+                }
+                else{
+                    
+                    return res.status(400).json({success: false, msg: "Customer's Distibutor not updated", err});
+                }
+            })
+        }
+        catch(err){
+            res.status(500).json({success: false, msg: `Server Error ${err}`})
+        }
+    })
 
 module.exports = router;
