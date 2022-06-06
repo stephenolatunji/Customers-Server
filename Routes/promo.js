@@ -9,13 +9,14 @@ router.route('/create-dream')
         const dreamPoint = req.body.dreamPoint;
         const dreamDuration = req.body.dreamDuration;
         const country = req.body.country;
+        const preferredDream = req.body.preferredDream;
         // const date = new Date().getFullYear()+'-'+(new Date().getMonth()+parseInt("1"))+'-'+new Date().getDate();
         const date = new Date(new Date().getTime() ).toISOString();
 
         try{
             await connectDB.query(`EXEC createDream @country = '${country}', @BB_Code = '${BB_Code}',
             @dreamName = '${dreamName}', @dreamPoint = ${dreamPoint}, @dreamDuration = ${dreamDuration},
-            @date = '${date}'`, (err, result) =>{
+            @date = '${date}', @preferredDream = '${preferredDream}'`, (err, result) =>{
                     if(result.recordset.length > 0){
                         return res.status(200).json({success: true, results: result.recordset[0]})
                     }
