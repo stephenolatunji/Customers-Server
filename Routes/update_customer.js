@@ -100,5 +100,26 @@ router.route('/update-phone')
             res.status(500).json({success: false, msg: `Server Error ${err}`})
         }
     })
+    router.route('/updatesellers/appid')
+    .patch(async( req, res) => {
+        const sfCode = req.body.sfCode;
+        const appId = req.body.appId;
+        const country = req.body.country;
+
+        try{
+            connectDB.query(`EXEC sellersAppId @SFCode = '${sfCode}', @appId = '${appId}', @country = '${country}'`, (err, results) =>{
+                if(results.recordset.length > 0){
+                    return res.status(200).json({success: true, msg: "App id updated", result: results.recordset[0]});
+                }
+                else{
+                    
+                    return res.status(400).json({success: false, msg: "App id not updated", err});
+                }
+            })
+        }
+        catch(err){
+            res.status(500).json({success: false, msg: `Server Error ${err}`})
+        }
+    })
 
 module.exports = router;
