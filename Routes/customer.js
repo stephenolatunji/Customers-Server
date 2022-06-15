@@ -100,7 +100,7 @@ router.route('/:id')
 
 
 router.route('/salesforce/:id')
-    .get(async(req, res) =>{
+    .post(async(req, res) =>{
         const id = req.params.id;
         const country = req.body.country;
 
