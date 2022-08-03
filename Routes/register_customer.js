@@ -28,31 +28,40 @@ router.route('/')
 
             const code = `${split_type}${split_type}${split_name}${random}`;
         try{
-            await connectDB.query(`EXEC selectCountSFCode @salesforceCode = '${SFCode}'`, async(err, results) =>{
-                if(!results.recordset[0]['']){
-                    await  connectDB.query(`INSERT INTO cust_tb (SF_Code, DIST_Code,
-                        CUST_Type, CUST_Name, email, phoneNumber, country, address, district, region,
-                        longitude, latitude, registeredOn, status, BB_Code, state) VALUES(
-                        '${SFCode}', '${distCode}', '${custType}', '${name}', '${email}',
-                        '${phone}', '${country}', '${address}', '${district}', '${region}', '${longitude}',
-                        '${latitude}', '${date}', 'Active', '${code}', '${state}')`, async(err, result) =>{
-                            if(result.rowsAffected.length > 0){
-                               
-                                return res.status(200).json({success: true, msg: 'Customer registered successfully', result: results.recordset[0]}) 
-                            }
-                            else{
-                                res.status(400).json({succcess: false, msg: 'New Customer not added', err}); 
-                            }
-                        }
-                    )
+            // await connectDB.query(`EXEC selectCountSFCode @salesforceCode = '${SFCode}'`, async(err, results) =>{
+            //     if(!results.recordset[0]['']){
+                  const result = await connectDB.request()
+                  .input("distributorCode", distCode)
+                  .input("salesforceCode", SFCode)
+                  .input("customerType", custType)
+                  .input("customerName", name)
+                  .input("customerCode", code)
+                  .input("email", email)
+                  .input("phoneNumber", phone)
+                  .input("country", country)
+                  .input("district", district)
+                  .input("state", state)
+                  .input("region", region)
+                  .input("address", address)
+                  .input("lat", latitude)
+                  .input("long", longitude)
+                  .input("registeredOn", date)
+                  .execute("registerCustomer");
+                    console.log(result);
+                  if(result.recordset && result.recordset.length > 0){
+                    return res.status(401).json({success: true, msg: 'Customer registered successfully', results: result.recordset[0]});
+                  }
+                  else{
+
+                  }
                    
-                }
-                else{
-                    return res.status(401).json({success: false, msg: 'Customer already registered', err});
-                }
-            })
+            //     }
+            //     else{
+            //         return res.status(401).json({success: false, msg: 'Customer already registered', err});
+            //     }
+            // })
         }
-        catch{
+        catch(err){
             res.status(500).json({success: false, msg: 'Server Error', err});
         }
     });
