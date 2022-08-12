@@ -96,7 +96,6 @@ router.route('/')
                   }
                    
                 }
-
                 else{
                     return res.status(401).json({success: false, msg: 'Customer with same phone number already registered', err});
                 }
