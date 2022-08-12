@@ -78,4 +78,28 @@ router.route('/create-dream')
 
             }
         })
+
+        router.route('/leader-board')
+        .post(async(req, res) =>{
+            const customerType = req.body.customerType;
+    
+            try{
+                await connectDB.query(`EXEC getDreamByCustomerType @customer_type= '${customerType}'`, (err, results) =>{
+                    if(results.recordset.length > 0){
+                        const data_ = results.recordset
+                        const data = data_.sort((a, b) => {
+                            return b.accumulated_points - a.accumulated_points
+                        })
+                        
+                       return res.status(200).json({success: true, msg: 'Customers found!', data })
+                    }
+                    else{
+                        return res.status(404).json({success: false, msg: 'Customer with code not found'})
+                    }
+                })
+    
+            }catch(err){
+                res.status(500).json({success: false, err, msg: 'Server Error'})
+            }
+        })
     module.exports = router;
