@@ -12,11 +12,12 @@ router.route('/create-dream')
         const preferredDream = req.body.preferredDream;
         // const date = new Date().getFullYear()+'-'+(new Date().getMonth()+parseInt("1"))+'-'+new Date().getDate();
         const date = new Date(new Date().getTime() ).toISOString();
+        const customerType = req.body.customerType;
 
         try{
             await connectDB.query(`EXEC createDream @country = '${country}', @BB_Code = '${BB_Code}',
             @dreamName = '${dreamName}', @dreamPoint = ${dreamPoint}, @dreamDuration = ${dreamDuration},
-            @date = '${date}', @preferredDream = '${preferredDream}'`, (err, result) =>{
+            @date = '${date}', @preferredDream = '${preferredDream}', @customer_type = '${customerType}'`, (err, result) =>{
                     if(result.recordset.length > 0){
                         return res.status(200).json({success: true, results: result.recordset[0]})
                     }
