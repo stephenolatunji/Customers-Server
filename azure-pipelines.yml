@@ -6,6 +6,7 @@ resources:
   - repository: appsectemplates
     type: git
     name: DevSecOps/DevSecOps
+    endpoint: CrossOrg-Devsecops
 
 variables:
 - group: CustomerServiceQA
