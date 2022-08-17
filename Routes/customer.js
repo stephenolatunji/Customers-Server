@@ -1,7 +1,53 @@
 const express = require('express');
 const connectDB = require('../config/db');
 const router = express.Router();
+const axios = require('axios').default;
 
+const getCustomerSySCode = (distCode, companies) => {
+    try {
+        const company = companies.find(element => {
+            // console.log(`>>>> Searching dist code: (${distCode}), against: (${element.DIST_Code}) <<<<`);
+            return element.DIST_Code === distCode;
+        });
+        if (company === undefined) {
+            return undefined;
+        }
+        return company.SYS_Code;
+    } catch (error) {
+        throw error;
+    }
+}
+
+const getCompanies = async() => {
+    try {
+        /* Gets all companies */
+        const url = `https://dmsqa20.azure-api.net/company/company/getall`;
+        const result = await axios.get(url);
+        // console.log(result.data.result);
+        return result.data.result;
+    } catch (error) {
+        throw error;
+    }
+}
+
+const getCustomerSysproCode = async(customerData) => {
+    try {
+        /* Gets the customer syspro code from the company it relates to */
+        const companies = await getCompanies();
+        customerData.map((element, index) => {
+            const customerSySCode = getCustomerSySCode(element.DIST_Code, companies);
+            if (customerSySCode !== undefined) {
+                element.sys_code = customerSySCode;
+            } else {
+                element.sys_code = 'undefined';
+            }
+        });
+        return customerData;
+
+    } catch (error) {
+        return {status: false, result: error};
+    }
+}
 
 router.route('/getall')
 .get(async(req, res)=> {
@@ -24,11 +70,11 @@ router.route('/getall')
                     endIndex = numOfCustomers <= endIndex ? numOfCustomers : endIndex;
                     console.log(`>>> After calculations #### Number of customers is (${numOfCustomers}), starting index is (${startIndex}), and limt is (${endIndex}) #### <<<`);
 
-                    await connectDB.query(`EXEC getModifiedCustomersByPagination @startIndex = '${startIndex}', @endIndex = '${endIndex}'`, (err, results) => {
+                    await connectDB.query(`EXEC getModifiedCustomersByPagination @startIndex = '${startIndex}', @endIndex = '${endIndex}'`, async(err, results) => {
                         // console.log(results);
                         if (results.recordset.length > 0) {
-                            //res.status(200).json({success: true, msg: 'Customers found!', result: customers.slice(startIndex, endIndex)});
-                            res.status(200).json({success: true, msg: 'Customers found!', result: results.recordset});
+                            const customerData = await getCustomerSysproCode(results.recordset);                           
+                            res.status(200).json({success: true, msg: 'Customers found!', result: customerData});
                         }
                         else {
                             res.status(400).json({success: false, msg: 'Customers not found', err});
