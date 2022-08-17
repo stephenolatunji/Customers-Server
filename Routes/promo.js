@@ -61,7 +61,7 @@ router.route('/create-dream')
                 await connectDB.query(`EXEC getMyDream @BB_Code = '${BB_Code}', @country = '${country}'`, async(err, results) =>{
                     if(results.recordset.length > 0){
                         let accumPoint = results.recordset[0].accumulated_points;
-                        accumPoint = parseInt(points + accumPoint)
+                        accumPoint = parseInt(points) + parseInt(accumPoint)
                         await connectDB.query(`EXEC updateDreamPoints @BB_Code = '${BB_Code}', @points = ${accumPoint}`, (err, result) =>{
                             if (result.recordset.length > 0) {
                                 return res.status(200).json({success: true, msg: 'Points Updated Successfully', results: result.recordset})
