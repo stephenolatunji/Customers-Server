@@ -2,7 +2,7 @@ const express = require('express');
 const connectDB = require('../config/db');
 const router = express.Router();
 const randomize  = require('randomatic');
-// const axios = require('axios');
+const axios = require('axios');
 
 
 router.route('/')
@@ -52,47 +52,51 @@ router.route('/')
 
                     const token = `POAPPLDMS2:Sec##urity123`;
                     const encodedToken = Buffer.from(token).toString('base64');
-                    // const dat = {
-                    //     SF_Code: SFCode,
-                    //     DIST_Code: distCode,
-                    //     CUST_Type: custType,
-                    //     CUST_Name: name,
-                    //     email: email,
-                    //     phoneNumber: phone,
-                    //     country: country,
-                    //     address: address,
-                    //     district: district,
-                    //     region: region,
-                    //     longitude: longitude,
-                    //     latitude: latitude,
-                    //     registeredOn: date,
-                    //     status: 'new',
-                    //     state: state
-                    // }
+                    const data = {
+                        SF_Code: SFCode,
+                        DIST_Code: distCode,
+                        CUST_Type: custType,
+                        CUST_Name: name,
+                        email: email,
+                        phoneNumber: phone,
+                        country: country,
+                        address: address,
+                        district: district,
+                        region: region,
+                        longitude: longitude,
+                        latitude: latitude,
+                        registeredOn: date,
+                        status: 'new',
+                        state: state
+                    }
                     // const data = dat.toArray()
-                    // axios.post('https://sappoqa.ab-inbev.com/RESTAdapter/Customer/CustomerCreate', data, 
+                    // await axios.post('https://sappoqa.ab-inbev.com/RESTAdapter/Customer/CustomerCreate', data, 
                     // {  headers: {'Authorization': `Basic ${encodedToken}`, 
-                    // 'content-type': 'application/json'}}).then (res => {
+                    // 'content-type': 'application/json'}}).then(result => {console.log(result);
                     //     // console.log(res);
-                    //     // res.status(200).json({success: true, msg: 'Customer registered successfully', results: res});
-                    //         if(res.success){
-                    //             const updater =  await connectDB.request()
-                    //             .input("SF_Code", res.id)
-                    //             .execute("updateCustomer");
-                    //             if(updater.rowsAffected && updater.rowsAffected.length > 0){
-                    //                 return res.status(200).json({success: true, msg: 'Customer creation successful', result: updater[0]})
-                    //             }
-                    //             else{}
+                        
+                    //         if(result.success){
+                    //             return res.status(200).json({success: true, msg: 'Customer registered successfully', results: result});
+                    //             // const updater =  await connectDB.request()
+                    //             // .input("SF_Code", res.id)
+                    //             // .execute("updateCustomer");
+                    //             // if(updater.rowsAffected && updater.rowsAffected.length > 0){
+                    //             //     return res.status(200).json({success: true, msg: 'Customer creation successful', result: updater[0]})
+                    //             // }
+                    //             // else{}
                     //         }
-                    //         else{}
+                    //         else{
+                    //             return res.status(500).json({success: false, msg: 'Failed to create customer on SalesForce'})
+                    //         }
                     //   })
                     //   .catch(error => {
-                    //     res.status(500).json({success: false, msg: 'Failed to create customer on SalesForce', error})
+                    //     console.log(error)
+                    //     return res.status(500).json({success: false, msg: 'Failed to create customer on SalesForce', error})
                     //   });
                       return res.status(200).json({success: true, msg: 'Customer registered successfully', results: result.recordset[0]});
                   }
                   else{
-                    return res.status(400).json({success: false, msg: err})
+                    return res.status(400).json({success: false, msg: 'DMS Error', err})
                   }
                    
                 }
