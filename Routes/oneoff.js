@@ -1,9 +1,10 @@
 const express = require('express');
 const connectDB = require('../config/db');
 const router = express.Router();
+const auth = require('../middleware/auth');
 
 router.route('/register')
-    .post(async(req, res) =>{
+    .post(auth, async(req, res) =>{
         const {customerName, phoneNumber, country} = req.body;
         const date = new Date().getFullYear()+'-'+(new Date().getMonth()+parseInt("1"))+'-'+new Date().getDate();
 
@@ -35,7 +36,7 @@ router.route('/register')
     })
 
 router.route('/getall')
-.get(async(req, res)=>{
+.get(auth, async(req, res)=>{
     try{
         await connectDB.query(`SELECT * FROM one_off_customer_tb`,(err, results) =>{
             if(results.rowsAffected > 0){
@@ -52,7 +53,7 @@ router.route('/getall')
 });
 
 router.route('/getbycountry/:country')
-    .get(async(req, res)=>{
+    .get(auth, async(req, res)=>{
         const country = req.params.country;
         try{
             await connectDB.query(`SELECT * FROM one_off_customer_tb WHERE country = '${country}'`,(err, results) =>{
@@ -70,7 +71,7 @@ router.route('/getbycountry/:country')
     });
 
     router.route('/:id')
-    .get(async(req, res)=>{
+    .get(auth, async(req, res)=>{
         const id = req.params.id;
         try{
             await connectDB.query(`SELECT * FROM one_off_customer_tb WHERE id = '${id}'`,(err, results) =>{

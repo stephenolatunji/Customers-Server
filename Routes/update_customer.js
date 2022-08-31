@@ -1,9 +1,10 @@
 const express = require('express');
 const connectDB = require('../config/db');
 const router = express.Router();
+const auth = require('../middleware/auth');
 
 router.route('/status/:id')
-    .patch(async(req, res)=>{
+    .patch(auth, async(req, res)=>{
         const status = req.body.status;
         const id = req.params.id
         try{
@@ -28,7 +29,7 @@ router.route('/status/:id')
     });
 
 router.route('/profile/:id')
-    .patch(async( req, res) => {
+    .patch(auth, async( req, res) => {
         const id = req.params.id;
         const data = req.body;
 
@@ -55,7 +56,7 @@ router.route('/profile/:id')
     })
 
 router.route('/update-phone')
-    .patch(async(req, res) =>{
+    .patch(auth, async(req, res) =>{
         const code = req.body.code;
         const phoneNumber = req.body.phoneNumber;
 
@@ -81,7 +82,7 @@ router.route('/update-phone')
     })
 
     router.route('/update-dist/change-dist')
-    .patch(async( req, res) => {
+    .patch(auth, async( req, res) => {
         const sfCode = req.body.sfCode;
         const distCode = req.body.distCode;
 
@@ -101,7 +102,7 @@ router.route('/update-phone')
         }
     })
     router.route('/updatesellers/appid')
-    .patch(async( req, res) => {
+    .patch(auth, async( req, res) => {
         const sfCode = req.body.sfCode;
         const appId = req.body.appId;
         const country = req.body.country;
