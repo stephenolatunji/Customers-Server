@@ -75,29 +75,30 @@ router.route('/')
                         Customer: data
                     }
                     
-                    await axios.post('https://sappoqa.ab-inbev.com/RESTAdapter/Customer/CustomerCreate', dat, 
-                    {  headers: {'Authorization': `Basic ${encodedToken}`, 
-                    'content-type': 'application/json'}}).then(result => {
-                        console.log(result);
-                            if(result.success){
-                                return res.status(200).json({success: true, result});
-                                // const updater =  await connectDB.request()
-                                // .input("SF_Code", result.id)
-                                // .execute("updateCustomer");
-                                // if(updater.rowsAffected && updater.rowsAffected.length > 0){
-                                //     return res.status(200).json({success: true, msg: 'Customer creation successful', result: updater[0]})
-                                // }
-                                // else{}
-                            }
-                            else{
-                                return res.status(500).json({success: false, msg: 'Failed to create customer on SalesForce'})
-                            }
-                      })
-                      .catch(error => {
-                        // console.log(error)
-                        return res.status(500).json({success: false, msg: 'Failed to create customer on SalesForce', error})
-                      });
-                    //   return res.status(200).json({success: true, msg: 'Customer registered successfully', results: result.recordset[0]});
+                    // await axios.post('https://sappoqa.ab-inbev.com/RESTAdapter/Customer/CustomerCreate', dat, 
+                    // {  headers: {'Authorization': `Basic ${encodedToken}`, 
+                    // 'content-type': 'application/json'}}).then(result => {
+                    //     console.log(result);
+                    //         if(result.success){
+                    //             return res.status(200).json({success: true, result});
+                    //             // const updater =  await connectDB.request()
+                    //             // .input("SF_Code", result.id)
+                    //             // .execute("updateCustomer");
+                    //             // if(updater.rowsAffected && updater.rowsAffected.length > 0){
+                    //             //     return res.status(200).json({success: true, msg: 'Customer creation successful', result: updater[0]})
+                    //             // }
+                    //             // else{}
+                    //         }
+                    //         else{
+                    //             return res.status(500).json({success: false, msg: 'Failed to create customer on SalesForce'})
+                    //         }
+                    //   })
+                    //   .catch(error => {
+                    //     // console.log(error)
+                    //     return res.status(500).json({success: false, msg: 'Failed to create customer on SalesForce', error})
+                    //   });
+                      return res.status(200).json({success: true, msg: 'Customer registered successfully', results: result.recordset[0]});
+                
                   }
                   else{
                     return res.status(400).json({success: false, msg: 'DMS Error', err})
@@ -114,45 +115,6 @@ router.route('/')
         }
     });
 
-// router.route('/one-off-customer')
-//     .post(async(req, res)=>{
-//         const {distCode, name, phone, country, email, address} = req.body;
-//         const date = new Date().getFullYear()+'-'+(new Date().getMonth()+parseInt("1"))+'-'+new Date().getDate();
-
-//         try{
-//             await connectDB.query(`SELECT COUNT(email) AS count FROM one_off_customer_tb WHERE email = '${email}'`, async(err, results)=>{
-//                 if(!results.recordset[0].count){
-//                     await connectDB.query(`INSERT INTO one_off_customer_tb (DIST_Code, 
-//                         CUST_Name, phoneNumber, email, country, address,
-//                         status, registeredOn) VALUES('${distCode}', '${name}', '${phone}',
-//                         '${email}', '${country}', '${address}', 'New', '${date}')`, async(err, results)=>{
-//                             if(results.rowsAffected > 0){
-//                                 await connectDB.query(`SELECT * FROM one_off_customer_tb WHERE email = '${email}'`, (err, results) => {
-//                                     if(results.recordset.length > 0){
-//                                         res.status(200).json({success: true, msg: 'Successfully registered', result: results.recordset[0]})
-//                                     }
-//                                     else{
-//                                         res.status(400).json({success: false, msg: 'Could not find newly registered customer', err});
-//                                     }
-//                                 })
-//                             }
-//                             else{
-//                                 res.status(500).json({success: false, msg: 'Customer was not registered', err});
-//                             }
-//                         })
-//                 }
-//                 else{
-                    
-
-//                      res.status(400).json({success: false, msg: 'You have already registered this customer', err});
-     
-//                 }
-//             })
-//         }
-//         catch(err){
-//             res.status(500).json({success: false, msg: 'Server Error', err});
-//         }
-//     })
 
 module.exports = router;
 
