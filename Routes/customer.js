@@ -50,7 +50,9 @@ const getCustomerSysproCode = async(customerData) => {
 }
 
 router.route('/getall')
-.get(auth, async(req, res)=> {
+.get(
+    // auth, 
+    async(req, res)=> {
     try{
         /* If query (page and limit, eg: -> apilink/getall?page=1&limit=5) paramters are passed,
         the result will be customers who are newly created or updated
@@ -105,7 +107,9 @@ router.route('/getall')
 
 
 router.route('/distributor/:code')
-    .get(auth, async (req, res) =>{
+    .get(
+        // auth, 
+        async (req, res) =>{
         const distCode = req.params.code;
 
         try{
@@ -125,7 +129,9 @@ router.route('/distributor/:code')
     });
 
 router.route('/:id')
-    .get(auth, async(req, res) =>{
+    .get(
+        // auth, 
+        async(req, res) =>{
         const id = req.params.id;
 
         try{
@@ -146,7 +152,9 @@ router.route('/:id')
 
 
 router.route('/salesforce/:id')
-    .post(auth, async(req, res) =>{
+    .post(
+        // auth, 
+        async(req, res) =>{
         const id = req.params.id;
         const country = req.body.country;
 
@@ -167,7 +175,9 @@ router.route('/salesforce/:id')
     });
 
 router.route('/status/:status')
-    .get(auth, async(req, res) =>{
+    .get(
+        // auth, 
+        async(req, res) =>{
         const status = req.params.status;
 
         try{
@@ -187,7 +197,9 @@ router.route('/status/:status')
     });
 
 router.route('/get-by-lastdigit/:country')
-    .post(auth, async(req, res) =>{
+    .post(
+        // auth, 
+        async(req, res) =>{
         const sfDigit = req.body.sfDigit;
         const country = req.params.country;
 
@@ -208,7 +220,9 @@ router.route('/get-by-lastdigit/:country')
 
 
 router.route('/getbycountry/:country')
-    .get(auth, async(req, res) =>{
+    .get(
+        // auth, 
+        async(req, res) =>{
         const country = req.params.country;
 
         try{
@@ -228,7 +242,9 @@ router.route('/getbycountry/:country')
     })
 
 router.route('/getcustomerbytype/:country/:type')
-    .get(auth, async(req, res) =>{
+    .get(
+        // auth, 
+        async(req, res) =>{
         const country = req.params.country;
         const type = req.params.type;
 
@@ -250,7 +266,9 @@ router.route('/getcustomerbytype/:country/:type')
 
 
 router.route('/rate-customer')
-    .patch(auth, async(req, res) =>{
+    .patch(
+        // auth, 
+        async(req, res) =>{
         const stars = req.body.stars;
         const comment = req.body.comment;
         const outletCode = req.body.outletCode;
@@ -308,7 +326,9 @@ router.route('/rate-customer')
     })
 
 router.route('/getcustomer-rating')
-.post(auth, async(req, res) =>{
+.post(
+    // auth, 
+    async(req, res) =>{
     const country = req.body.country;
     const outletCode = req.body.outletCode;
 
@@ -329,7 +349,9 @@ router.route('/getcustomer-rating')
 })
 
 router.route('/bdr-customers')
-.post(auth, async(req, res) =>{
+.post(
+    // auth, 
+    async(req, res) =>{
     const country = req.body.country;
     const email = req.body.email;
 
@@ -350,7 +372,9 @@ router.route('/bdr-customers')
 })
 
 router.route('/getbydistributor-array')
-    .post(auth, async(req, res) => {
+    .post(
+        // auth, 
+        async(req, res) => {
        const distCodes = req.body.dist;
        let xc = [];
        try{
