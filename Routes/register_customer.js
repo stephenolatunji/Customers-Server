@@ -7,7 +7,9 @@ const auth = require('../middleware/auth');
 
 
 router.route('/')
-    .post(auth, async(req, res)=>{
+    .post(
+        // auth, 
+        async(req, res)=>{
         const date = new Date().getFullYear()+'-'+(new Date().getMonth()+parseInt("1"))+'-'+new Date().getDate();
         const {
             SFCode,
@@ -27,7 +29,6 @@ router.route('/')
         const random = randomize('0', 4);
             const split_name = name.slice(0, 3).toUpperCase();
             const split_type = custType.charAt(0).toUpperCase();
-
             const code = `${split_type}${split_type}${split_name}${random}`;
         try{
             await connectDB.query(`SELECT COUNT(phoneNumber) AS count FROM cust_tb WHERE phoneNumber = '${phone}'`, async(err, results) =>{
@@ -50,7 +51,6 @@ router.route('/')
                   .input("registeredOn", date)
                   .execute("registerCustomer");
                   if(result.recordset && result.recordset.length > 0){
-
                     const token = `POAPPLDMS2:Sec##urity123`;
                     const encodedToken = Buffer.from(token).toString('base64');
                     const datum = {
@@ -74,20 +74,19 @@ router.route('/')
                     const dat = {
                         Customer: data
                     }
-                    
                     // await axios.post('https://sappoqa.ab-inbev.com/RESTAdapter/Customer/CustomerCreate', dat, 
                     // {  headers: {'Authorization': `Basic ${encodedToken}`, 
                     // 'content-type': 'application/json'}}).then(result => {
                     //     console.log(result);
                     //         if(result.success){
                     //             return res.status(200).json({success: true, result});
-                    //             // const updater =  await connectDB.request()
-                    //             // .input("SF_Code", result.id)
-                    //             // .execute("updateCustomer");
-                    //             // if(updater.rowsAffected && updater.rowsAffected.length > 0){
-                    //             //     return res.status(200).json({success: true, msg: 'Customer creation successful', result: updater[0]})
-                    //             // }
-                    //             // else{}
+                    //             const updater =  await connectDB.request()
+                    //             .input("SF_Code", result.id)
+                    //             .execute("updateCustomer");
+                    //             if(updater.rowsAffected && updater.rowsAffected.length > 0){
+                    //                 return res.status(200).json({success: true, msg: 'Customer creation successful', result: updater[0]})
+                    //             }
+                    //             else{}
                     //         }
                     //         else{
                     //             return res.status(500).json({success: false, msg: 'Failed to create customer on SalesForce'})
