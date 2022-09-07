@@ -1,5 +1,5 @@
 const express = require('express');
-const connectDB = require('../config/db');
+const connectDB = require('../Config/db');
 const router = express.Router();
 const randomize  = require('randomatic');
 const axios = require('axios');
