@@ -1,10 +1,11 @@
 const express = require('express');
-const connectDB = require('../config/db');
+const connectDB = require('../Config/db');
 const router = express.Router();
 const csv = require('csvtojson');
 const multer = require('multer')
 const fs = require('fs');
 const randomize = require('randomatic');
+const auth = require('../middleware/auth')
 
 global.__basedir = __dirname;
 
@@ -31,7 +32,7 @@ const upload = multer({storage: parser, fileFilter: filter});
 
 
 router.route('/upload')
-    .post(upload.single('file'), async(req, res) =>{
+    .post(auth, upload.single('file'), async(req, res) =>{
         // res.setHeader('Content-Type', 'multipart/form-data');
         try{
             if(req.file == undefined){

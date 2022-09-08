@@ -1,11 +1,58 @@
 const express = require('express');
-const { reset } = require('nodemon');
-const connectDB = require('../config/db');
+const connectDB = require('../Config/db');
 const router = express.Router();
+const axios = require('axios').default;
+const auth = require('../middleware/auth')
+const getCustomerSySCode = (distCode, companies) => {
+    try {
+        const company = companies.find(element => {
+            // console.log(`>>>> Searching dist code: (${distCode}), against: (${element.DIST_Code}) <<<<`);
+            return element.DIST_Code === distCode;
+        });
+        if (company === undefined) {
+            return undefined;
+        }
+        return company.SYS_Code;
+    } catch (error) {
+        throw error;
+    }
+}
 
+const getCompanies = async() => {
+    try {
+        /* Gets all companies */
+        const url = `https://dmsqa20.azure-api.net/company/company/getall`;
+        const result = await axios.get(url);
+        // console.log(result.data.result);
+        return result.data.result;
+    } catch (error) {
+        throw error;
+    }
+}
+
+const getCustomerSysproCode = async(customerData) => {
+    try {
+        /* Gets the customer syspro code from the company it relates to */
+        const companies = await getCompanies();
+        customerData.map((element, index) => {
+            const customerSySCode = getCustomerSySCode(element.DIST_Code, companies);
+            if (customerSySCode !== undefined) {
+                element.sys_code = customerSySCode;
+            } else {
+                element.sys_code = 'undefined';
+            }
+        });
+        return customerData;
+
+    } catch (error) {
+        return {status: false, result: error};
+    }
+}
 
 router.route('/getall')
-.get(async(req, res)=> {
+.get(
+    // auth, 
+    async(req, res)=> {
     try{
         /* If query (page and limit, eg: -> apilink/getall?page=1&limit=5) paramters are passed,
         the result will be customers who are newly created or updated
@@ -25,11 +72,11 @@ router.route('/getall')
                     endIndex = numOfCustomers <= endIndex ? numOfCustomers : endIndex;
                     console.log(`>>> After calculations #### Number of customers is (${numOfCustomers}), starting index is (${startIndex}), and limt is (${endIndex}) #### <<<`);
 
-                    await connectDB.query(`EXEC getModifiedCustomersByPagination @startIndex = '${startIndex}', @endIndex = '${endIndex}'`, (err, results) => {
+                    await connectDB.query(`EXEC getModifiedCustomersByPagination @startIndex = '${startIndex}', @endIndex = '${endIndex}'`, async(err, results) => {
                         // console.log(results);
                         if (results.recordset.length > 0) {
-                            //res.status(200).json({success: true, msg: 'Customers found!', result: customers.slice(startIndex, endIndex)});
-                            res.status(200).json({success: true, msg: 'Customers found!', result: results.recordset});
+                            const customerData = await getCustomerSysproCode(results.recordset);                           
+                            res.status(200).json({success: true, msg: 'Customers found!', result: customerData});
                         }
                         else {
                             res.status(400).json({success: false, msg: 'Customers not found', err});
@@ -60,7 +107,9 @@ router.route('/getall')
 
 
 router.route('/distributor/:code')
-    .get(async (req, res) =>{
+    .get(
+        // auth, 
+        async (req, res) =>{
         const distCode = req.params.code;
 
         try{
@@ -80,7 +129,9 @@ router.route('/distributor/:code')
     });
 
 router.route('/:id')
-    .get(async(req, res) =>{
+    .get(
+        // auth, 
+        async(req, res) =>{
         const id = req.params.id;
 
         try{
@@ -101,13 +152,15 @@ router.route('/:id')
 
 
 router.route('/salesforce/:id')
-    .get(async(req, res) =>{
+    .post(
+        // auth, 
+        async(req, res) =>{
         const id = req.params.id;
         const country = req.body.country;
 
         try{
             
-            await connectDB.query(`EXEC getcustomersBySalesforceId @salesforceId = '${id}', @country = '${country}'`, (err, results) =>{
+            await connectDB.query(`EXEC getcustomersBySalesforceId @salesforceId = '${id}', @country = '${country}'`, (err, results) =>{console.log(err);
                 if(results.recordset.length > 0){
                     res.status(200).json({success: true, msg: 'Customer found!', result: results.recordset});
                }
@@ -122,7 +175,9 @@ router.route('/salesforce/:id')
     });
 
 router.route('/status/:status')
-    .get(async(req, res) =>{
+    .get(
+        // auth, 
+        async(req, res) =>{
         const status = req.params.status;
 
         try{
@@ -142,7 +197,9 @@ router.route('/status/:status')
     });
 
 router.route('/get-by-lastdigit/:country')
-    .post(async(req, res) =>{
+    .post(
+        // auth, 
+        async(req, res) =>{
         const sfDigit = req.body.sfDigit;
         const country = req.params.country;
 
@@ -163,7 +220,9 @@ router.route('/get-by-lastdigit/:country')
 
 
 router.route('/getbycountry/:country')
-    .get(async(req, res) =>{
+    .get(
+        // auth, 
+        async(req, res) =>{
         const country = req.params.country;
 
         try{
@@ -183,7 +242,9 @@ router.route('/getbycountry/:country')
     })
 
 router.route('/getcustomerbytype/:country/:type')
-    .get(async(req, res) =>{
+    .get(
+        // auth, 
+        async(req, res) =>{
         const country = req.params.country;
         const type = req.params.type;
 
@@ -205,7 +266,9 @@ router.route('/getcustomerbytype/:country/:type')
 
 
 router.route('/rate-customer')
-    .patch(async(req, res) =>{
+    .patch(
+        // auth, 
+        async(req, res) =>{
         const stars = req.body.stars;
         const comment = req.body.comment;
         const outletCode = req.body.outletCode;
@@ -227,7 +290,7 @@ router.route('/rate-customer')
                                 const currentRating = (parseFloat(ratings/raters)).toFixed(1);
                                 await connectDB.query(`EXEC updateCustomerRating @outletCode = '${outletCode}', @rating = ${ratings}, 
                                 @raters = ${raters}, @stars = ${currentRating}, @country = '${country}'`, async(err, results) =>{
-                                    if(results.rowsAffected > 0){
+                                    if(results.recordset.length > 0){
                                         return res.status(200).json({success: true, result: results.recordset[0]})
                                     }
                                     else{
@@ -263,7 +326,9 @@ router.route('/rate-customer')
     })
 
 router.route('/getcustomer-rating')
-.post(async(req, res) =>{
+.post(
+    // auth, 
+    async(req, res) =>{
     const country = req.body.country;
     const outletCode = req.body.outletCode;
 
@@ -284,7 +349,9 @@ router.route('/getcustomer-rating')
 })
 
 router.route('/bdr-customers')
-.post(async(req, res) =>{
+.post(
+    // auth, 
+    async(req, res) =>{
     const country = req.body.country;
     const email = req.body.email;
 
@@ -305,7 +372,9 @@ router.route('/bdr-customers')
 })
 
 router.route('/getbydistributor-array')
-    .post(async(req, res) => {
+    .post(
+        // auth, 
+        async(req, res) => {
        const distCodes = req.body.dist;
        let xc = [];
        try{

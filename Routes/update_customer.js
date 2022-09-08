@@ -1,9 +1,13 @@
 const express = require('express');
-const connectDB = require('../config/db');
+const connectDB = require('../Config/db');
 const router = express.Router();
+const auth = require('../middleware/auth');
 
 router.route('/status/:id')
-    .patch(async(req, res)=>{
+    .patch(
+        // auth, 
+        async(req, res)=>{
+
         const status = req.body.status;
         const id = req.params.id
         try{
@@ -28,7 +32,9 @@ router.route('/status/:id')
     });
 
 router.route('/profile/:id')
-    .patch(async( req, res) => {
+    .patch(
+        // auth, 
+        async( req, res) => {
         const id = req.params.id;
         const data = req.body;
 
@@ -55,7 +61,9 @@ router.route('/profile/:id')
     })
 
 router.route('/update-phone')
-    .patch(async(req, res) =>{
+    .patch(
+        // auth, 
+        async(req, res) =>{
         const code = req.body.code;
         const phoneNumber = req.body.phoneNumber;
 
@@ -81,7 +89,9 @@ router.route('/update-phone')
     })
 
     router.route('/update-dist/change-dist')
-    .patch(async( req, res) => {
+    .patch(
+        // auth, 
+        async( req, res) => {
         const sfCode = req.body.sfCode;
         const distCode = req.body.distCode;
 
@@ -93,6 +103,29 @@ router.route('/update-phone')
                 else{
                     
                     return res.status(400).json({success: false, msg: "Customer's Distibutor not updated", err});
+                }
+            })
+        }
+        catch(err){
+            res.status(500).json({success: false, msg: `Server Error ${err}`})
+        }
+    })
+    router.route('/updatesellers/appid')
+    .patch(
+        // auth, 
+        async( req, res) => {
+        const sfCode = req.body.sfCode;
+        const appId = req.body.appId;
+        const country = req.body.country;
+
+        try{
+            connectDB.query(`EXEC sellersAppId @SFCode = '${sfCode}', @appId = '${appId}', @country = '${country}'`, (err, results) =>{
+                if(results.recordset.length > 0){
+                    return res.status(200).json({success: true, msg: "App id updated", result: results.recordset[0]});
+                }
+                else{
+                    
+                    return res.status(400).json({success: false, msg: "App id not updated", err});
                 }
             })
         }
