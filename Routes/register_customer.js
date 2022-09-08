@@ -74,30 +74,15 @@ router.route('/')
                     const dat = {
                         Customer: data
                     }
-                    // await axios.post('https://sappoqa.ab-inbev.com/RESTAdapter/Customer/CustomerCreate', dat, 
-                    // {  headers: {'Authorization': `Basic ${encodedToken}`, 
-                    // 'content-type': 'application/json'}}).then(result => {
-                    //     console.log(result);
-                    //         if(result.success){
-                    //             return res.status(200).json({success: true, result});
-                    //             const updater =  await connectDB.request()
-                    //             .input("SF_Code", result.id)
-                    //             .execute("updateCustomer");
-                    //             if(updater.rowsAffected && updater.rowsAffected.length > 0){
-                    //                 return res.status(200).json({success: true, msg: 'Customer creation successful', result: updater[0]})
-                    //             }
-                    //             else{}
-                    //         }
-                    //         else{
-                    //             return res.status(500).json({success: false, msg: 'Failed to create customer on SalesForce'})
-                    //         }
-                    //   })
-                    //   .catch(error => {
-                    //     // console.log(error)
-                    //     return res.status(500).json({success: false, msg: 'Failed to create customer on SalesForce', error})
-                    //   });
-                      return res.status(200).json({success: true, msg: 'Customer registered successfully', results: result.recordset[0]});
-                
+                //    const x = await axios.post('https://sappoqa.ab-inbev.com/RESTAdapter/Customer/CustomerCreate', dat, 
+                //     {  headers: {'Authorization': `Basic ${encodedToken}`, 
+                //     'content-type': 'application/json'}})
+                //     console.log(x);
+                //     //   return res.status(200).json({success: true, msg: 'Customer registered successfully', results: result.recordset[0]});
+                //     if(x){
+                //         return x;
+                //     }
+                return res.status(200).json({success: true, msg: 'Customer registered successfully', results: result.recordset[0]});
                   }
                   else{
                     return res.status(400).json({success: false, msg: 'DMS Error', err})
