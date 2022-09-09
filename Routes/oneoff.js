@@ -5,7 +5,7 @@ const auth = require('../middleware/auth');
 
 router.route('/register')
     .post(
-        // auth, 
+        auth, 
         async(req, res) =>{
         const {customerName, phoneNumber, country} = req.body;
         const date = new Date().getFullYear()+'-'+(new Date().getMonth()+parseInt("1"))+'-'+new Date().getDate();
@@ -39,7 +39,7 @@ router.route('/register')
 
 router.route('/getall')
 .get(
-    // auth, 
+    auth, 
     async(req, res)=>{
     try{
         await connectDB.query(`SELECT * FROM one_off_customer_tb`,(err, results) =>{
@@ -58,7 +58,7 @@ router.route('/getall')
 
 router.route('/getbycountry/:country')
     .get(
-        // auth, 
+        auth, 
         async(req, res)=>{
         const country = req.params.country;
         try{
@@ -78,7 +78,7 @@ router.route('/getbycountry/:country')
 
     router.route('/:id')
     .get(
-        // auth, 
+        auth, 
         async(req, res)=>{
         const id = req.params.id;
         try{
