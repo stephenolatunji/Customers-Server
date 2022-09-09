@@ -5,7 +5,7 @@ const auth = require('../middleware/auth');
 
 router.route('/create-dream')
     .post(
-        // auth, 
+        auth, 
         async(req, res) =>{
         const BB_Code = req.body.BB_Code;
         const dreamName = req.body.dreamName;
@@ -36,7 +36,7 @@ router.route('/create-dream')
 
     router.route('/getdream')
     .post(
-        // auth, 
+        auth, 
         async(req, res) =>{
         const BB_Code = req.body.BB_Code;
         const country = req.body.country;
@@ -58,7 +58,7 @@ router.route('/create-dream')
 
     router.route('/update-points')
         .patch(
-            // auth, 
+            auth, 
             async(req, res) =>{
             const BB_Code = req.body.BB_Code;
             const points = req.body.points;
@@ -90,7 +90,7 @@ router.route('/create-dream')
 
         router.route('/leader-board')
         .post(
-            // auth, 
+            auth, 
             async(req, res) =>{
             const customerType = req.body.customerType;
     

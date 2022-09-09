@@ -8,7 +8,7 @@ const auth = require('../middleware/auth');
 
 router.route('/')
     .post(
-        // auth, 
+        auth, 
         async(req, res)=>{
         const date = new Date().getFullYear()+'-'+(new Date().getMonth()+parseInt("1"))+'-'+new Date().getDate();
         const {
