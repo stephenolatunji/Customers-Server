@@ -4,9 +4,10 @@ require('dotenv').config;
 module.exports = (req, res, next) => {
   try {
     const key = process.env.JWT_SECRET
-    let token = req.headers.authorization ||
+    let token = req.headers.authorization||
     req.body.token || req.query.token || req.headers['x-access-token']
-    token = token.split(' ')[0]
+    token = token.split(' ')[1]
+    console.log(token);
     if(token) {
       jwt.verify(token, key, (error, decoded) => {
         if(error) {
